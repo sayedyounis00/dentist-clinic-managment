@@ -117,6 +117,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (data) setPatients(prev => prev.map(pt => pt.id === p.id ? mapPatient(data) : pt));
   }, []);
 
+  const deletePatient = useCallback(async (id: string): Promise<boolean> => {
+    await supabase.from('treatments').delete().eq('patient_id', id);
+    await supabase.from('payments').delete().eq('patient_id', id);
+    await supabase.from('appointments').delete().eq('patient_id', id);
+    const { error } = await supabase.from('patients').delete().eq('id', id);
+    if (!error) {
+      setPatients(prev => prev.filter(p => p.id !== id));
+      setTreatments(prev => prev.filter(t => t.patientId !== id));
+      setPayments(prev => prev.filter(p => p.patientId !== id));
+      setAppointments(prev => prev.filter(a => a.patientId !== id));
+      return true;
+    }
+    return false;
+  }, []);
+
   const addTreatment = useCallback(async (t: Omit<Treatment, 'id' | 'addedBy'>) => {
     const { data } = await supabase.from('treatments').insert({
       patient_id: t.patientId, description: t.description, tooth: t.tooth,

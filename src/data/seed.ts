@@ -7,11 +7,11 @@ export const seedUsers: User[] = [
 ];
 
 export const seedPatients: Patient[] = [
-  { id: 'p1', name: 'Mohamed Khalil', phone: '0501234567', email: 'mkhalil@email.com', dateOfBirth: '1985-03-15', bloodType: 'A+', medicalHistory: 'No significant history', allergies: 'Penicillin', createdAt: '2024-06-01', createdBy: 'u1' },
-  { id: 'p2', name: 'Fatima Al-Rashid', phone: '0557654321', email: 'fatima@email.com', dateOfBirth: '1990-07-22', bloodType: 'O-', medicalHistory: 'Diabetes Type 2', allergies: 'None', createdAt: '2024-06-05', createdBy: 'u1' },
-  { id: 'p3', name: 'Omar Youssef', phone: '0509876543', email: 'omar.y@email.com', dateOfBirth: '1978-11-08', bloodType: 'B+', medicalHistory: 'Hypertension', allergies: 'Latex', createdAt: '2024-07-10', createdBy: 'u1' },
-  { id: 'p4', name: 'Layla Mansour', phone: '0551122334', email: 'layla.m@email.com', dateOfBirth: '1995-01-30', bloodType: 'AB+', medicalHistory: 'None', allergies: 'Sulfa drugs', createdAt: '2024-08-01', createdBy: 'u1' },
-  { id: 'p5', name: 'Karim Abdel-Nasser', phone: '0504455667', email: 'karim.an@email.com', dateOfBirth: '1982-09-14', bloodType: 'A-', medicalHistory: 'Asthma', allergies: 'Aspirin', createdAt: '2024-08-15', createdBy: 'u1' },
+  { id: 'p1', name: 'Mohamed Khalil', phone: '0501234567', email: 'mkhalil@email.com', dateOfBirth: '1985-03-15', bloodType: 'A+', medicalHistory: 'No significant history', allergies: 'Penicillin', age: 39, country: 'مصر', createdAt: '2024-06-01', createdBy: 'u1' },
+  { id: 'p2', name: 'Fatima Al-Rashid', phone: '0557654321', email: 'fatima@email.com', dateOfBirth: '1990-07-22', bloodType: 'O-', medicalHistory: 'Diabetes Type 2', allergies: 'None', age: 34, country: 'مصر', createdAt: '2024-06-05', createdBy: 'u1' },
+  { id: 'p3', name: 'Omar Youssef', phone: '0509876543', email: 'omar.y@email.com', dateOfBirth: '1978-11-08', bloodType: 'B+', medicalHistory: 'Hypertension', allergies: 'Latex', age: 46, country: 'مصر', createdAt: '2024-07-10', createdBy: 'u1' },
+  { id: 'p4', name: 'Layla Mansour', phone: '0551122334', email: 'layla.m@email.com', dateOfBirth: '1995-01-30', bloodType: 'AB+', medicalHistory: 'None', allergies: 'Sulfa drugs', age: 29, country: 'مصر', createdAt: '2024-08-01', createdBy: 'u1' },
+  { id: 'p5', name: 'Karim Abdel-Nasser', phone: '0504455667', email: 'karim.an@email.com', dateOfBirth: '1982-09-14', bloodType: 'A-', medicalHistory: 'Asthma', allergies: 'Aspirin', age: 42, country: 'مصر', createdAt: '2024-08-15', createdBy: 'u1' },
 ];
 
 const today = new Date().toISOString().split('T')[0];

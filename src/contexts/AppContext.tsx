@@ -29,7 +29,7 @@ const AppContext = createContext<AppContextType | null>(null);
 
 // Map DB rows (snake_case) to app types (camelCase)
 const mapUser = (r: any): User => ({ id: r.id, name: r.name, password: r.password, role: r.role, createdAt: r.created_at });
-const mapPatient = (r: any): Patient => ({ id: r.id, name: r.name, phone: r.phone, email: r.email, dateOfBirth: r.date_of_birth, bloodType: r.blood_type, medicalHistory: r.medical_history, allergies: r.allergies, createdAt: r.created_at, createdBy: r.created_by });
+const mapPatient = (r: any): Patient => ({ id: r.id, name: r.name, phone: r.phone, email: r.email, dateOfBirth: r.date_of_birth, bloodType: r.blood_type, medicalHistory: r.medical_history, allergies: r.allergies, age: r.age, country: r.country || '', createdAt: r.created_at, createdBy: r.created_by });
 const mapTreatment = (r: any): Treatment => ({ id: r.id, patientId: r.patient_id, description: r.description, tooth: r.tooth, cost: Number(r.cost), date: r.date, notes: r.notes, addedBy: r.added_by });
 const mapPayment = (r: any): Payment => ({ id: r.id, patientId: r.patient_id, amount: Number(r.amount), date: r.date, method: r.method, note: r.note, recordedBy: r.recorded_by });
 const mapAppointment = (r: any): Appointment => ({ id: r.id, patientId: r.patient_id, date: r.date, time: r.time, duration: r.duration, type: r.type, status: r.status, notes: r.notes, createdBy: r.created_by });
@@ -97,6 +97,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const { data } = await supabase.from('patients').insert({
       name: p.name, phone: p.phone, email: p.email, date_of_birth: p.dateOfBirth,
       blood_type: p.bloodType, medical_history: p.medicalHistory, allergies: p.allergies,
+      age: p.age, country: p.country,
       created_by: currentUser?.id,
     }).select().single();
     if (data) {
@@ -110,6 +111,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const { data } = await supabase.from('patients').update({
       name: p.name, phone: p.phone, email: p.email, date_of_birth: p.dateOfBirth,
       blood_type: p.bloodType, medical_history: p.medicalHistory, allergies: p.allergies,
+      age: p.age, country: p.country,
     }).eq('id', p.id).select().single();
     if (data) setPatients(prev => prev.map(pt => pt.id === p.id ? mapPatient(data) : pt));
   }, []);

@@ -1,0 +1,2 @@
+ALTER TABLE public.patients ADD COLUMN IF NOT EXISTS age integer DEFAULT NULL;
+ALTER TABLE public.patients ADD COLUMN IF NOT EXISTS country text NOT NULL DEFAULT '';

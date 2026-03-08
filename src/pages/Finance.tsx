@@ -52,9 +52,9 @@ export default function Finance() {
         <Card>
           <CardHeader><CardTitle className="text-lg">تفصيل طرق الدفع</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-primary" /><span>نقداً</span></div><span className="font-bold">{cashTotal.toLocaleString()} ر.س</span></div>
-            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /><span>بطاقة</span></div><span className="font-bold">{cardTotal.toLocaleString()} ر.س</span></div>
-            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /><span>تأمين</span></div><span className="font-bold">{insuranceTotal.toLocaleString()} ر.س</span></div>
+            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-primary" /><span>نقداً</span></div><span className="font-bold">{cashTotal.toLocaleString()} ج.م</span></div>
+            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /><span>بطاقة</span></div><span className="font-bold">{cardTotal.toLocaleString()} ج.م</span></div>
+            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /><span>تأمين</span></div><span className="font-bold">{insuranceTotal.toLocaleString()} ج.م</span></div>
             {totalCollected > 0 && (
               <div className="mt-4 flex h-4 overflow-hidden rounded-full bg-muted">
                 <div className="bg-primary" style={{ width: `${(cashTotal / totalCollected) * 100}%` }} />

@@ -51,7 +51,7 @@ export default function Patients({ onViewPatient }: Props) {
           <h1 className="text-2xl font-bold">المرضى</h1>
           <p className="text-muted-foreground">{patients.length} مريض مسجل</p>
         </div>
-        {isDoctor && <Button onClick={() => setShowAdd(true)}><Plus className="ml-2 h-4 w-4" /> إضافة مريض</Button>}
+        <Button onClick={() => setShowAdd(true)}><Plus className="ml-2 h-4 w-4" /> إضافة مريض</Button>
       </div>
 
       <Card>

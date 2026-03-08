@@ -26,7 +26,7 @@ export default function Sidebar({ currentPage, onNavigate, collapsed, onToggleCo
   return (
     <TooltipProvider delayDuration={0}>
       <div className={cn(
-        'flex h-screen flex-col bg-sidebar-background text-sidebar-foreground transition-all duration-300',
+        'flex h-screen flex-col bg-gradient-to-b from-sidebar-background to-sidebar-accent text-sidebar-foreground transition-all duration-300',
         collapsed ? 'w-[68px]' : 'w-64'
       )}>
         <div className={cn('flex items-center gap-3 p-4 border-b border-sidebar-border', collapsed && 'justify-center')}>

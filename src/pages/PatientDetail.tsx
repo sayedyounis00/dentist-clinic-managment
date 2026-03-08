@@ -19,7 +19,7 @@ import Invoice from '@/components/Invoice';
 interface Props { patientId: string; onBack: () => void; }
 
 export default function PatientDetail({ patientId, onBack }: Props) {
-  const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment, addAppointment, updatePatient, deletePatient } = useApp();
+  const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment, addAppointment, deleteAppointment, updatePatient, deletePatient } = useApp();
   const { toast } = useToast();
   const patient = patients.find(p => p.id === patientId)!;
   const fin = getPatientFinancials(patientId, treatments, payments);
@@ -205,8 +205,28 @@ export default function PatientDetail({ patientId, onBack }: Props) {
                   {ptAppts.map(a => (
                     <div key={a.id} className="flex items-center justify-between rounded-lg border p-3">
                      <div><p className="font-medium text-sm">{a.type}</p><p className="text-xs text-muted-foreground">{a.notes}</p></div>
-                      <div className="text-left"><p className="text-sm">{a.date}</p>
-                        <Badge variant={a.status === 'completed' ? 'default' : a.status === 'cancelled' ? 'destructive' : 'secondary'}>{apptStatusAr(a.status)}</Badge>
+                      <div className="flex items-center gap-2">
+                        <div className="text-left"><p className="text-sm">{a.date}</p>
+                          <Badge variant={a.status === 'completed' ? 'default' : a.status === 'cancelled' ? 'destructive' : 'secondary'}>{apptStatusAr(a.status)}</Badge>
+                        </div>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>حذف الموعد؟</AlertDialogTitle>
+                              <AlertDialogDescription>سيتم حذف هذا الموعد نهائياً.</AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                              <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={async () => {
+                                const ok = await deleteAppointment(a.id);
+                                toast({ title: ok ? 'تم بنجاح' : 'خطأ', description: ok ? 'تم حذف الموعد' : 'حدث خطأ', variant: ok ? 'default' : 'destructive' });
+                              }}>حذف</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
                   ))}

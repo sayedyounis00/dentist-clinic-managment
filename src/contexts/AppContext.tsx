@@ -23,6 +23,7 @@ interface AppContextType {
   appointments: Appointment[];
   addAppointment: (a: Omit<Appointment, 'id' | 'createdBy'>) => void;
   updateAppointment: (a: Appointment) => void;
+  deleteAppointment: (id: string) => Promise<boolean>;
   loading: boolean;
 }
 
@@ -164,13 +165,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (data) setAppointments(prev => prev.map(ap => ap.id === a.id ? mapAppointment(data) : ap));
   }, []);
 
+  const deleteAppointment = useCallback(async (id: string): Promise<boolean> => {
+    const { error } = await supabase.from('appointments').delete().eq('id', id);
+    if (!error) {
+      setAppointments(prev => prev.filter(a => a.id !== id));
+      return true;
+    }
+    return false;
+  }, []);
+
   return (
     <AppContext.Provider value={{
       currentUser, users, login, logout, registerDoctor, addReceptionist, updateUser, isDoctor,
       patients, addPatient, updatePatient, deletePatient,
       treatments, addTreatment,
       payments, addPayment,
-      appointments, addAppointment, updateAppointment,
+      appointments, addAppointment, updateAppointment, deleteAppointment,
       loading,
     }}>
       {children}

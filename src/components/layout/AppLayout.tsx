@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { PanelRightClose } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Dashboard from '@/pages/Dashboard';
 import Patients from '@/pages/Patients';
@@ -12,6 +14,7 @@ export default function AppLayout() {
   const { isDoctor } = useApp();
   const [page, setPage] = useState('dashboard');
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const navigate = (p: string) => {
     setPage(p);
@@ -39,8 +42,18 @@ export default function AppLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar currentPage={page} onNavigate={navigate} />
-      <main className="flex-1 overflow-auto bg-muted/30 p-6">
+      <Sidebar currentPage={page} onNavigate={navigate} collapsed={sidebarCollapsed} onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <main className="flex-1 overflow-auto bg-muted/30 p-6 relative">
+        {sidebarCollapsed && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 right-2 z-10"
+            onClick={() => setSidebarCollapsed(false)}
+          >
+            <PanelRightClose className="h-5 w-5" />
+          </Button>
+        )}
         {renderPage()}
       </main>
     </div>

@@ -16,11 +16,12 @@ const navItems = [
 interface SidebarProps {
   currentPage: string;
   onNavigate: (page: string) => void;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
-export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
+export default function Sidebar({ currentPage, onNavigate, collapsed, onToggleCollapse }: SidebarProps) {
   const { currentUser, isDoctor, logout } = useApp();
-  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -45,7 +46,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
             variant="ghost"
             size="icon"
             className="h-7 w-7 text-sidebar-foreground hover:text-sidebar-primary hover:bg-sidebar-accent"
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={onToggleCollapse}
           >
             {collapsed ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
           </Button>

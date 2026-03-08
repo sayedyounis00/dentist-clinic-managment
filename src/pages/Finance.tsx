@@ -73,7 +73,7 @@ export default function Finance() {
                 <TableHeader><TableRow><TableHead>المريض</TableHead><TableHead>المستحق</TableHead><TableHead>الحالة</TableHead></TableRow></TableHeader>
                 <TableBody>
                   {patientBalances.slice(0, 10).map(p => (
-                    <TableRow key={p.id}><TableCell className="font-medium">{p.name}</TableCell><TableCell>{p.balance.toLocaleString()} ر.س</TableCell><TableCell><Badge variant={p.status === 'Partial' ? 'secondary' : 'destructive'}>{statusAr(p.status)}</Badge></TableCell></TableRow>
+                    <TableRow key={p.id}><TableCell className="font-medium">{p.name}</TableCell><TableCell>{p.balance.toLocaleString()} ج.م</TableCell><TableCell><Badge variant={p.status === 'Partial' ? 'secondary' : 'destructive'}>{statusAr(p.status)}</Badge></TableCell></TableRow>
                   ))}
                 </TableBody>
               </Table>

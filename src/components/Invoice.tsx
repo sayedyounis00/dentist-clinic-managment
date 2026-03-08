@@ -113,9 +113,9 @@ export default function Invoice({ patient, treatments, payments, onBack }: Props
 
         <div className="flex justify-start">
           <div className="w-64 space-y-2">
-            <div className="flex justify-between text-sm"><span className="text-muted-foreground">المجموع:</span><span>{fin.totalCharged.toLocaleString()} ر.س</span></div>
-            <div className="flex justify-between text-sm"><span className="text-muted-foreground">إجمالي المدفوع:</span><span>-{fin.totalPaid.toLocaleString()} ر.س</span></div>
-            <div className="flex justify-between font-bold text-lg border-t-2 border-foreground pt-2"><span>الرصيد المستحق:</span><span>{fin.balance.toLocaleString()} ر.س</span></div>
+            <div className="flex justify-between text-sm"><span className="text-muted-foreground">المجموع:</span><span>{fin.totalCharged.toLocaleString()} ج.م</span></div>
+            <div className="flex justify-between text-sm"><span className="text-muted-foreground">إجمالي المدفوع:</span><span>-{fin.totalPaid.toLocaleString()} ج.م</span></div>
+            <div className="flex justify-between font-bold text-lg border-t-2 border-foreground pt-2"><span>الرصيد المستحق:</span><span>{fin.balance.toLocaleString()} ج.م</span></div>
             <div className="flex justify-start pt-1">
               <Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'} className="text-sm">{statusAr(fin.status)}</Badge>
             </div>

@@ -178,7 +178,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
 
       <Dialog open={showPayment} onOpenChange={setShowPayment}>
         <DialogContent>
-          <DialogHeader><DialogTitle>تسجيل دفعة</DialogTitle><DialogDescription>تسجيل دفعة لـ {patient.name}. الرصيد: {fin.balance.toLocaleString()} ر.س</DialogDescription></DialogHeader>
+          <DialogHeader><DialogTitle>تسجيل دفعة</DialogTitle><DialogDescription>تسجيل دفعة لـ {patient.name}. الرصيد: {fin.balance.toLocaleString()} ج.م</DialogDescription></DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="space-y-2"><Label>المبلغ *</Label><Input type="number" value={pForm.amount} onChange={e => setPForm({ ...pForm, amount: e.target.value })} placeholder="0.00" /></div>
             <div className="grid grid-cols-2 gap-4">

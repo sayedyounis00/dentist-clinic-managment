@@ -38,10 +38,10 @@ export default function Patients({ onViewPatient }: Props) {
     const patientId = await addPatient({ name: form.name, phone: form.phone, email: '', bloodType: '', dateOfBirth: '', allergies: '', medicalHistory: '', age: form.age ? parseInt(form.age) : null, country: form.country });
     if (patientId) {
       if (form.examFee && parseFloat(form.examFee) > 0) {
-        addTreatment({ patientId, description: 'كشف', cost: parseFloat(form.examFee), date: new Date().toISOString().split('T')[0], notes: '', tooth: undefined });
+        await addTreatment({ patientId, description: 'كشف', cost: parseFloat(form.examFee), date: new Date().toISOString().split('T')[0], notes: '', tooth: undefined });
       }
       if (form.appointmentDate) {
-        addAppointment({ patientId, date: form.appointmentDate, time: '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
+        await addAppointment({ patientId, date: form.appointmentDate, time: '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
       }
     }
     setForm({ name: '', phone: '', age: '', country: '', appointmentDate: '', examFee: '' });

@@ -104,6 +104,21 @@ export default function PatientDetail({ patientId, onBack }: Props) {
           <p className="text-muted-foreground">{patient.phone}</p>
         </div>
         <Button variant="outline" size="sm" onClick={openEditDialog}><Pencil className="ml-2 h-4 w-4" /> تعديل</Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm"><Trash2 className="ml-2 h-4 w-4" /> حذف</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>هل أنت متأكد من حذف هذا المريض؟</AlertDialogTitle>
+              <AlertDialogDescription>سيتم حذف المريض "{patient.name}" وجميع بياناته (العلاجات، المدفوعات، المواعيد) نهائياً. لا يمكن التراجع عن هذا الإجراء.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>إلغاء</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeletePatient} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">حذف نهائياً</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         <Button variant="outline" onClick={() => setShowInvoice(true)}><Printer className="ml-2 h-4 w-4" /> فاتورة</Button>
       </div>
 

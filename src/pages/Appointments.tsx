@@ -45,8 +45,7 @@ export default function AppointmentsPage() {
   };
 
   const filtered = appointments
-    .filter(a => a.date === selectedDate)
-    .sort((a, b) => a.time.localeCompare(b.time));
+    .filter(a => a.date === selectedDate);
 
   const todayAppointments = appointments.filter(a => a.date === today);
   const scheduledCount = todayAppointments.filter(a => a.status === 'scheduled').length;

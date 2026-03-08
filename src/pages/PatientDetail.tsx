@@ -81,6 +81,16 @@ export default function PatientDetail({ patientId, onBack }: Props) {
     toast({ title: 'تم بنجاح', description: 'تم تحديث بيانات المريض' });
   };
 
+  const handleDeletePatient = async () => {
+    const success = await deletePatient(patientId);
+    if (success) {
+      toast({ title: 'تم بنجاح', description: 'تم حذف المريض وجميع بياناته' });
+      onBack();
+    } else {
+      toast({ title: 'خطأ', description: 'حدث خطأ أثناء حذف المريض', variant: 'destructive' });
+    }
+  };
+
   if (showInvoice) {
     return <Invoice patient={patient} treatments={ptTreatments} payments={ptPayments} onBack={() => setShowInvoice(false)} />;
   }

@@ -106,8 +106,6 @@ export default function AppointmentsPage() {
     setEditingAppt(appt);
     setEditForm({
       date: appt.date,
-      time: appt.time,
-      duration: appt.duration.toString(),
       type: appt.type,
       notes: appt.notes,
       status: appt.status,

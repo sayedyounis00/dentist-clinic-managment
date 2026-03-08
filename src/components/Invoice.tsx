@@ -105,7 +105,7 @@ export default function Invoice({ patient, treatments, payments, onBack }: Props
             <table className="w-full mb-6 text-sm">
               <thead><tr className="border-b-2 border-border"><th className="text-right py-2 text-muted-foreground text-xs">التاريخ</th><th className="text-right py-2 text-muted-foreground text-xs">الطريقة</th><th className="text-left py-2 text-muted-foreground text-xs">المبلغ</th></tr></thead>
               <tbody>
-                {payments.map(p => (<tr key={p.id} className="border-b border-border/50"><td className="py-2">{p.date}</td><td className="py-2">{methodAr(p.method)}</td><td className="py-2 text-left">{p.amount.toLocaleString()} ر.س</td></tr>))}
+                {payments.map(p => (<tr key={p.id} className="border-b border-border/50"><td className="py-2">{p.date}</td><td className="py-2">{methodAr(p.method)}</td><td className="py-2 text-left">{p.amount.toLocaleString()} ج.م</td></tr>))}
               </tbody>
             </table>
           </>

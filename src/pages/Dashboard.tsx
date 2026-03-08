@@ -155,11 +155,9 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
                       <p className="font-medium text-sm">{p.name}</p>
                       <p className="text-xs text-muted-foreground">{p.phone}</p>
                     </div>
-                    {isDoctor && (
-                      <Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'}>
-                        {statusAr(fin.status)}
-                      </Badge>
-                    )}
+                    <Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'}>
+                      {statusAr(fin.status)}
+                    </Badge>
                   </div>
                 );
               })}

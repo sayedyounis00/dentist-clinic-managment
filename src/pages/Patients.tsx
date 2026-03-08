@@ -86,7 +86,7 @@ export default function Patients({ onViewPatient }: Props) {
                 );
               })}
               {filtered.length === 0 && (
-                <TableRow><TableCell colSpan={isDoctor ? 5 : 3} className="text-center text-muted-foreground py-8">لا يوجد مرضى</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">لا يوجد مرضى</TableCell></TableRow>
               )}
             </TableBody>
           </Table>

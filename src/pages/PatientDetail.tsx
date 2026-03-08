@@ -69,14 +69,12 @@ export default function PatientDetail({ patientId, onBack }: Props) {
         <Button variant="outline" onClick={() => setShowInvoice(true)}><Printer className="ml-2 h-4 w-4" /> فاتورة</Button>
       </div>
 
-      {isDoctor && (
-        <div className="grid grid-cols-4 gap-4">
-          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-xl font-bold">{fin.totalCharged.toLocaleString()} ج.م</p></CardContent></Card>
-          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي المدفوع</p><p className="text-xl font-bold">{fin.totalPaid.toLocaleString()} ج.م</p></CardContent></Card>
-          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الرصيد</p><p className="text-xl font-bold">{fin.balance.toLocaleString()} ج.م</p></CardContent></Card>
-          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الحالة</p><Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'} className="mt-1">{statusAr(fin.status)}</Badge></CardContent></Card>
-        </div>
-      )}
+      <div className="grid grid-cols-4 gap-4">
+        <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-xl font-bold">{fin.totalCharged.toLocaleString()} ج.م</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي المدفوع</p><p className="text-xl font-bold">{fin.totalPaid.toLocaleString()} ج.م</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الرصيد</p><p className="text-xl font-bold">{fin.balance.toLocaleString()} ج.م</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الحالة</p><Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'} className="mt-1">{statusAr(fin.status)}</Badge></CardContent></Card>
+      </div>
 
       <Tabs defaultValue="demographics">
         <TabsList>

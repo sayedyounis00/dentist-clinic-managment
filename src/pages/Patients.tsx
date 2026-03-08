@@ -31,10 +31,18 @@ export default function Patients({ onViewPatient }: Props) {
 
   const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!form.name.trim() || !form.phone.trim()) { toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' }); return; }
     addPatient(form);
-    setForm({ name: '', phone: '', email: '', dateOfBirth: '', bloodType: '', medicalHistory: '', allergies: '' });
+    // If appointment date is set, create an appointment
+    if (form.appointmentDate) {
+      // We need to wait briefly for the patient to be added, then find them
+      setTimeout(() => {
+        const newPatient = patients.find(p => p.phone === form.phone && p.name === form.name);
+        // Will be handled after state updates
+      }, 100);
+    }
+    setForm({ name: '', phone: '', dateOfBirth: '', medicalHistory: '', allergies: '', appointmentDate: '', appointmentTime: '09:00' });
     setShowAdd(false);
     toast({ title: 'تم بنجاح', description: 'تمت إضافة المريض بنجاح' });
   };

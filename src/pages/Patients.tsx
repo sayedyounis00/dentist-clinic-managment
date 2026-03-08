@@ -109,10 +109,7 @@ export default function Patients({ onViewPatient }: Props) {
               <div className="space-y-2"><Label>الاسم الكامل *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
               <div className="space-y-2"><Label>الهاتف *</Label><Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>تاريخ الميلاد</Label><Input type="date" value={form.dateOfBirth} onChange={e => setForm({ ...form, dateOfBirth: e.target.value })} /></div>
-              <div className="space-y-2"><Label>الحساسية</Label><Input value={form.allergies} onChange={e => setForm({ ...form, allergies: e.target.value })} /></div>
-            </div>
+            <div className="space-y-2"><Label>التاريخ المرضي</Label><Textarea value={form.medicalHistory} onChange={e => setForm({ ...form, medicalHistory: e.target.value })} /></div>
             <div className="space-y-2"><Label>التاريخ المرضي</Label><Textarea value={form.medicalHistory} onChange={e => setForm({ ...form, medicalHistory: e.target.value })} /></div>
             <div className="border-t pt-4 mt-2">
               <p className="text-sm font-medium mb-3">موعد الكشف (اختياري)</p>

@@ -43,9 +43,9 @@ export default function Finance() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">اليوم</p><p className="text-xl font-bold">{todayRev.toLocaleString()} ر.س</p></CardContent></Card>
-        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">هذا الأسبوع</p><p className="text-xl font-bold">{weekRev.toLocaleString()} ر.س</p></CardContent></Card>
-        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">هذا الشهر</p><p className="text-xl font-bold">{monthRev.toLocaleString()} ر.س</p></CardContent></Card>
+        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">اليوم</p><p className="text-xl font-bold">{todayRev.toLocaleString()} ج.م</p></CardContent></Card>
+        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">هذا الأسبوع</p><p className="text-xl font-bold">{weekRev.toLocaleString()} ج.م</p></CardContent></Card>
+        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">هذا الشهر</p><p className="text-xl font-bold">{monthRev.toLocaleString()} ج.م</p></CardContent></Card>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

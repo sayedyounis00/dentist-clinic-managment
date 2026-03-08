@@ -42,7 +42,8 @@ export default function Sidebar({ currentPage, onNavigate, collapsed, onToggleCo
           )}
         </div>
 
-        <div className={cn('flex justify-end p-2', collapsed && 'justify-center')}>
+        <div className={cn('flex items-center gap-1 p-2', collapsed ? 'justify-center flex-col' : 'justify-end')}>
+          <ThemeToggle collapsed={collapsed} />
           <Button
             variant="ghost"
             size="icon"

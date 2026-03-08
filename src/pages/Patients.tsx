@@ -35,7 +35,7 @@ export default function Patients({ onViewPatient }: Props) {
 
   const handleAdd = async () => {
     if (!form.name.trim() || !form.phone.trim()) { toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' }); return; }
-    const patientId = await addPatient({ ...form, email: '', bloodType: '' });
+    const patientId = await addPatient({ ...form, email: '', bloodType: '', dateOfBirth: '', allergies: '' });
     if (patientId && form.appointmentDate) {
       addAppointment({ patientId, date: form.appointmentDate, time: '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
     }

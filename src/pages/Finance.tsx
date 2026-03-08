@@ -37,9 +37,9 @@ export default function Finance() {
       <div><h1 className="text-2xl font-bold">المالية</h1><p className="text-muted-foreground">الإيرادات والنظرة المالية العامة للعيادة</p></div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><Wallet className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">إجمالي المحصّل</p><p className="text-2xl font-bold">{totalCollected.toLocaleString()} ر.س</p></div></CardContent></Card>
-        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><TrendingUp className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-2xl font-bold">{totalCharged.toLocaleString()} ر.س</p></div></CardContent></Card>
-        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10"><Wallet className="h-6 w-6 text-destructive" /></div><div><p className="text-sm text-muted-foreground">إجمالي المستحق</p><p className="text-2xl font-bold">{totalOwed.toLocaleString()} ر.س</p></div></CardContent></Card>
+        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><Wallet className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">إجمالي المحصّل</p><p className="text-2xl font-bold">{totalCollected.toLocaleString()} ج.م</p></div></CardContent></Card>
+        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><TrendingUp className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-2xl font-bold">{totalCharged.toLocaleString()} ج.م</p></div></CardContent></Card>
+        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10"><Wallet className="h-6 w-6 text-destructive" /></div><div><p className="text-sm text-muted-foreground">إجمالي المستحق</p><p className="text-2xl font-bold">{totalOwed.toLocaleString()} ج.م</p></div></CardContent></Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">

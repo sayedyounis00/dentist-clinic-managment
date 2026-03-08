@@ -35,8 +35,7 @@ export default function Patients({ onViewPatient }: Props) {
 
   const handleAdd = async () => {
     if (!form.name.trim() || !form.phone.trim()) { toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' }); return; }
-    const medicalHistory = [form.country ? `البلد: ${form.country}` : '', form.age ? `السن: ${form.age}` : ''].filter(Boolean).join('\n');
-    const patientId = await addPatient({ ...form, email: '', bloodType: '', dateOfBirth: '', allergies: '', medicalHistory });
+    const patientId = await addPatient({ name: form.name, phone: form.phone, email: '', bloodType: '', dateOfBirth: '', allergies: '', medicalHistory: '', age: form.age ? parseInt(form.age) : null, country: form.country });
     if (patientId) {
       if (form.examFee && parseFloat(form.examFee) > 0) {
         addTreatment({ patientId, description: 'كشف', cost: parseFloat(form.examFee), date: new Date().toISOString().split('T')[0], notes: '', tooth: undefined });

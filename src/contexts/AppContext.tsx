@@ -111,6 +111,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const { data } = await supabase.from('patients').update({
       name: p.name, phone: p.phone, email: p.email, date_of_birth: p.dateOfBirth,
       blood_type: p.bloodType, medical_history: p.medicalHistory, allergies: p.allergies,
+      age: p.age, country: p.country,
     }).eq('id', p.id).select().single();
     if (data) setPatients(prev => prev.map(pt => pt.id === p.id ? mapPatient(data) : pt));
   }, []);

@@ -15,6 +15,8 @@ export interface Patient {
   bloodType: string;
   medicalHistory: string;
   allergies: string;
+  age: number | null;
+  country: string;
   createdAt: string;
   createdBy: string;
 }

@@ -56,6 +56,18 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
           </CardContent>
         </Card>
 
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('patients')}>
+          <CardContent className="flex items-center gap-4 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10">
+              <Users className="h-6 w-6 text-secondary" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">إجمالي المرضى</p>
+              <p className="text-2xl font-bold">{patients.length}</p>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardContent className="flex items-center gap-4 p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10">

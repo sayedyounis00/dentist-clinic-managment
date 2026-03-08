@@ -35,11 +35,17 @@ export default function Patients({ onViewPatient }: Props) {
 
   const handleAdd = async () => {
     if (!form.name.trim() || !form.phone.trim()) { toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' }); return; }
-    const patientId = await addPatient({ ...form, email: '', bloodType: '', dateOfBirth: '', allergies: '', medicalHistory: form.country ? `البلد: ${form.country}` : '' });
-    if (patientId && form.appointmentDate) {
-      addAppointment({ patientId, date: form.appointmentDate, time: '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
+    const medicalHistory = [form.country ? `البلد: ${form.country}` : '', form.age ? `السن: ${form.age}` : ''].filter(Boolean).join('\n');
+    const patientId = await addPatient({ ...form, email: '', bloodType: '', dateOfBirth: '', allergies: '', medicalHistory });
+    if (patientId) {
+      if (form.examFee && parseFloat(form.examFee) > 0) {
+        addTreatment({ patientId, description: 'كشف', cost: parseFloat(form.examFee), date: new Date().toISOString().split('T')[0], notes: '', tooth: undefined });
+      }
+      if (form.appointmentDate) {
+        addAppointment({ patientId, date: form.appointmentDate, time: '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
+      }
     }
-    setForm({ name: '', phone: '', age: '', country: '', appointmentDate: '' });
+    setForm({ name: '', phone: '', age: '', country: '', appointmentDate: '', examFee: '' });
     setShowAdd(false);
     toast({ title: 'تم بنجاح', description: form.appointmentDate ? 'تمت إضافة المريض وحجز الموعد' : 'تمت إضافة المريض بنجاح' });
   };

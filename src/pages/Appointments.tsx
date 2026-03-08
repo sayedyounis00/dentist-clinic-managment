@@ -29,7 +29,7 @@ export default function AppointmentsPage() {
     switch (s) {
       case 'completed': return <CheckCircle className="h-4 w-4 text-primary" />;
       case 'cancelled': return <XCircle className="h-4 w-4 text-destructive" />;
-      case 'no-show': return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+      case 'no-show': return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
       default: return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
   };

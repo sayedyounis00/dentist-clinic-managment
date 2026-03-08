@@ -88,7 +88,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="flex items-center gap-3"><Heart className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">Age</p><p className="font-medium">{age} years</p></div></div>
                 <div className="flex items-center gap-3"><Droplets className="h-5 w-5 text-destructive" /><div><p className="text-xs text-muted-foreground">Blood Type</p><p className="font-medium">{patient.bloodType || 'N/A'}</p></div></div>
-                <div className="flex items-center gap-3"><AlertTriangle className="h-5 w-5 text-yellow-500" /><div><p className="text-xs text-muted-foreground">Allergies</p><p className="font-medium">{patient.allergies || 'None'}</p></div></div>
+                <div className="flex items-center gap-3"><AlertTriangle className="h-5 w-5 text-destructive" /><div><p className="text-xs text-muted-foreground">Allergies</p><p className="font-medium">{patient.allergies || 'None'}</p></div></div>
                 <div className="flex items-center gap-3"><FileText className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">DOB</p><p className="font-medium">{patient.dateOfBirth || 'N/A'}</p></div></div>
               </div>
               <div className="mt-6"><p className="text-sm text-muted-foreground mb-1">Medical History</p><p className="text-sm">{patient.medicalHistory || 'No records'}</p></div>

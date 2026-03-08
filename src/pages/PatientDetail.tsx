@@ -98,13 +98,10 @@ export default function PatientDetail({ patientId, onBack }: Props) {
         <TabsContent value="demographics">
           <Card>
             <CardContent className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
                 <div className="flex items-center gap-3"><Heart className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">العمر</p><p className="font-medium">{age} سنة</p></div></div>
-                <div className="flex items-center gap-3"><Droplets className="h-5 w-5 text-destructive" /><div><p className="text-xs text-muted-foreground">فصيلة الدم</p><p className="font-medium">{patient.bloodType || 'غير محدد'}</p></div></div>
-                <div className="flex items-center gap-3"><AlertTriangle className="h-5 w-5 text-destructive" /><div><p className="text-xs text-muted-foreground">الحساسية</p><p className="font-medium">{patient.allergies || 'لا يوجد'}</p></div></div>
-                <div className="flex items-center gap-3"><FileText className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">تاريخ الميلاد</p><p className="font-medium">{patient.dateOfBirth || 'غير محدد'}</p></div></div>
+                <div className="flex items-center gap-3"><MapPin className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">البلد</p><p className="font-medium">{country}</p></div></div>
               </div>
-              <div className="mt-6"><p className="text-sm text-muted-foreground mb-1">التاريخ المرضي</p><p className="text-sm">{patient.medicalHistory || 'لا توجد سجلات'}</p></div>
             </CardContent>
           </Card>
         </TabsContent>

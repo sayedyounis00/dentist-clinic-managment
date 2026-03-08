@@ -19,7 +19,7 @@ import Invoice from '@/components/Invoice';
 interface Props { patientId: string; onBack: () => void; }
 
 export default function PatientDetail({ patientId, onBack }: Props) {
-  const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment, updatePatient } = useApp();
+  const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment, updatePatient, deletePatient } = useApp();
   const { toast } = useToast();
   const patient = patients.find(p => p.id === patientId)!;
   const fin = getPatientFinancials(patientId, treatments, payments);

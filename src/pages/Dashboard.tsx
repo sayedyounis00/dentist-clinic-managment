@@ -43,7 +43,7 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
         <p className="text-muted-foreground">مرحباً بك! هذه نظرة عامة على عيادتك.</p>
       </div>
 
-      <div className={`grid gap-4 ${isDoctor ? 'md:grid-cols-5' : 'md:grid-cols-3'}`}>
+      <div className={`grid gap-4 ${isDoctor ? 'md:grid-cols-6' : 'md:grid-cols-3'}`}>
         <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('appointments')}>
           <CardContent className="flex items-center gap-4 p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">

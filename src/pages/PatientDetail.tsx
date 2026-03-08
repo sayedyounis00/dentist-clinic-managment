@@ -12,13 +12,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Plus, Printer, Heart, MapPin } from 'lucide-react';
+import { ArrowRight, Plus, Printer, Heart, MapPin, Pencil } from 'lucide-react';
 import Invoice from '@/components/Invoice';
 
 interface Props { patientId: string; onBack: () => void; }
 
 export default function PatientDetail({ patientId, onBack }: Props) {
-  const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment } = useApp();
+  const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment, updatePatient } = useApp();
   const { toast } = useToast();
   const patient = patients.find(p => p.id === patientId)!;
   const fin = getPatientFinancials(patientId, treatments, payments);
@@ -29,21 +29,10 @@ export default function PatientDetail({ patientId, onBack }: Props) {
   const [showTreatment, setShowTreatment] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [showInvoice, setShowInvoice] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [tForm, setTForm] = useState({ description: '', tooth: '', cost: '', date: new Date().toISOString().split('T')[0], notes: '' });
   const [pForm, setPForm] = useState({ amount: '', date: new Date().toISOString().split('T')[0], method: 'cash' as 'cash' | 'card' | 'insurance', note: '' });
-
-  // Parse age and country from medicalHistory
-  const parseMedicalHistory = (mh: string) => {
-    const lines = mh.split('\n');
-    let age = 'غير محدد';
-    let country = 'غير محدد';
-    for (const line of lines) {
-      if (line.startsWith('السن:')) age = line.replace('السن:', '').trim();
-      if (line.startsWith('البلد:')) country = line.replace('البلد:', '').trim();
-    }
-    return { age, country };
-  };
-  const { age, country } = parseMedicalHistory(patient.medicalHistory || '');
+  const [editForm, setEditForm] = useState({ name: '', phone: '', age: '', country: '' });
 
   const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
   const apptStatusAr = (s: string) => s === 'scheduled' ? 'مجدول' : s === 'completed' ? 'مكتمل' : s === 'cancelled' ? 'ملغي' : 'لم يحضر';
@@ -65,6 +54,32 @@ export default function PatientDetail({ patientId, onBack }: Props) {
     toast({ title: 'تم بنجاح', description: 'تم تسجيل الدفعة' });
   };
 
+  const openEditDialog = () => {
+    setEditForm({
+      name: patient.name,
+      phone: patient.phone,
+      age: patient.age?.toString() || '',
+      country: patient.country || '',
+    });
+    setShowEdit(true);
+  };
+
+  const handleEditPatient = () => {
+    if (!editForm.name.trim() || !editForm.phone.trim()) {
+      toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' });
+      return;
+    }
+    updatePatient({
+      ...patient,
+      name: editForm.name,
+      phone: editForm.phone,
+      age: editForm.age ? parseInt(editForm.age) : null,
+      country: editForm.country,
+    });
+    setShowEdit(false);
+    toast({ title: 'تم بنجاح', description: 'تم تحديث بيانات المريض' });
+  };
+
   if (showInvoice) {
     return <Invoice patient={patient} treatments={ptTreatments} payments={ptPayments} onBack={() => setShowInvoice(false)} />;
   }
@@ -77,6 +92,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
           <h1 className="text-2xl font-bold">{patient.name}</h1>
           <p className="text-muted-foreground">{patient.phone}</p>
         </div>
+        <Button variant="outline" size="sm" onClick={openEditDialog}><Pencil className="ml-2 h-4 w-4" /> تعديل</Button>
         <Button variant="outline" onClick={() => setShowInvoice(true)}><Printer className="ml-2 h-4 w-4" /> فاتورة</Button>
       </div>
 
@@ -98,9 +114,9 @@ export default function PatientDetail({ patientId, onBack }: Props) {
         <TabsContent value="demographics">
           <Card>
             <CardContent className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
-                <div className="flex items-center gap-3"><Heart className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">العمر</p><p className="font-medium">{age} سنة</p></div></div>
-                <div className="flex items-center gap-3"><MapPin className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">البلد</p><p className="font-medium">{country}</p></div></div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="flex items-center gap-3"><Heart className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">العمر</p><p className="font-medium">{patient.age ? `${patient.age} سنة` : 'غير محدد'}</p></div></div>
+                <div className="flex items-center gap-3"><MapPin className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">البلد</p><p className="font-medium">{patient.country || 'غير محدد'}</p></div></div>
               </div>
             </CardContent>
           </Card>
@@ -165,6 +181,24 @@ export default function PatientDetail({ patientId, onBack }: Props) {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Edit Patient Dialog */}
+      <Dialog open={showEdit} onOpenChange={setShowEdit}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>تعديل بيانات المريض</DialogTitle><DialogDescription>تعديل بيانات {patient.name}</DialogDescription></DialogHeader>
+          <div className="grid gap-4 py-2">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2"><Label>الاسم الكامل *</Label><Input value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} /></div>
+              <div className="space-y-2"><Label>الهاتف *</Label><Input value={editForm.phone} onChange={e => setEditForm({ ...editForm, phone: e.target.value })} /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2"><Label>السن</Label><Input type="number" value={editForm.age} onChange={e => setEditForm({ ...editForm, age: e.target.value })} placeholder="مثال: 30" /></div>
+              <div className="space-y-2"><Label>البلد</Label><Input value={editForm.country} onChange={e => setEditForm({ ...editForm, country: e.target.value })} placeholder="مثال: مصر" /></div>
+            </div>
+          </div>
+          <DialogFooter><Button variant="outline" onClick={() => setShowEdit(false)}>إلغاء</Button><Button onClick={handleEditPatient}>حفظ التعديلات</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={showTreatment} onOpenChange={setShowTreatment}>
         <DialogContent>

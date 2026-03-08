@@ -62,7 +62,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
                   collapsed && 'justify-center px-0',
                   currentPage === item.path
                     ? 'bg-sidebar-accent text-sidebar-primary'
-                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                 )}
               >
                 <item.icon className="h-4 w-4 shrink-0" />

@@ -35,11 +35,11 @@
     --radius: 0.75rem;
 
     --sidebar-background: 220 60% 20%;
-    --sidebar-foreground: 220 15% 85%;
+    --sidebar-foreground: 220 10% 92%;
     --sidebar-primary: 190 80% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 50% 28%;
-    --sidebar-accent-foreground: 220 15% 92%;
+    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 220 45% 26%;
     --sidebar-ring: 190 80% 50%;
   }

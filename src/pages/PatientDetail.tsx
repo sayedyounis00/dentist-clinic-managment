@@ -272,6 +272,28 @@ export default function PatientDetail({ patientId, onBack }: Props) {
           <DialogFooter><Button variant="outline" onClick={() => setShowPayment(false)}>إلغاء</Button><Button onClick={handleAddPayment}>تسجيل الدفعة</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Add Appointment Dialog */}
+      <Dialog open={showAddAppt} onOpenChange={setShowAddAppt}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>إضافة موعد</DialogTitle><DialogDescription>إضافة موعد جديد لـ {patient.name}</DialogDescription></DialogHeader>
+          <div className="grid gap-4 py-2">
+            <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={apptForm.date} onChange={e => setApptForm({ ...apptForm, date: e.target.value })} /></div>
+            <div className="space-y-2"><Label>النوع</Label><Input value={apptForm.type} onChange={e => setApptForm({ ...apptForm, type: e.target.value })} placeholder="مثال: كشف، متابعة" /></div>
+            <div className="space-y-2"><Label>ملاحظات</Label><Textarea value={apptForm.notes} onChange={e => setApptForm({ ...apptForm, notes: e.target.value })} /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddAppt(false)}>إلغاء</Button>
+            <Button onClick={() => {
+              if (!apptForm.type) { toast({ title: 'خطأ', description: 'نوع الموعد مطلوب', variant: 'destructive' }); return; }
+              addAppointment({ patientId, date: apptForm.date, time: '00:00', duration: 0, type: apptForm.type, status: 'scheduled', notes: apptForm.notes });
+              setApptForm({ date: new Date().toISOString().split('T')[0], type: 'كشف', notes: '' });
+              setShowAddAppt(false);
+              toast({ title: 'تم بنجاح', description: 'تم إضافة الموعد' });
+            }}>إضافة</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

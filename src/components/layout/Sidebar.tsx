@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { LayoutDashboard, Users, CalendarDays, Wallet, UserCog, LogOut, Stethoscope, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navItems = [
   { label: 'لوحة التحكم', icon: LayoutDashboard, path: 'dashboard', doctorOnly: false },
@@ -41,7 +42,8 @@ export default function Sidebar({ currentPage, onNavigate, collapsed, onToggleCo
           )}
         </div>
 
-        <div className={cn('flex justify-end p-2', collapsed && 'justify-center')}>
+        <div className={cn('flex items-center gap-1 p-2', collapsed ? 'justify-center flex-col' : 'justify-end')}>
+          <ThemeToggle collapsed={collapsed} />
           <Button
             variant="ghost"
             size="icon"

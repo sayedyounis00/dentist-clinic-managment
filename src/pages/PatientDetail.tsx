@@ -194,7 +194,11 @@ export default function PatientDetail({ patientId, onBack }: Props) {
 
         <TabsContent value="appointments">
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">المواعيد</h3>
+                <Button size="sm" onClick={() => setShowAddAppt(true)}><Plus className="ml-1 h-4 w-4" /> إضافة موعد</Button>
+              </div>
               {ptAppts.length === 0 ? <p className="text-center text-muted-foreground py-8">لا توجد مواعيد</p> : (
                 <div className="space-y-3">
                   {ptAppts.map(a => (

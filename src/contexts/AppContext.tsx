@@ -15,6 +15,7 @@ interface AppContextType {
   patients: Patient[];
   addPatient: (p: Omit<Patient, 'id' | 'createdAt' | 'createdBy'>) => Promise<string | null>;
   updatePatient: (p: Patient) => void;
+  deletePatient: (id: string) => Promise<boolean>;
   treatments: Treatment[];
   addTreatment: (t: Omit<Treatment, 'id' | 'addedBy'>) => void;
   payments: Payment[];

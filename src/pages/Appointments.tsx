@@ -250,11 +250,7 @@ export default function AppointmentsPage() {
             <DialogDescription>تعديل بيانات الموعد لـ {editingAppt ? patients.find(p => p.id === editingAppt.patientId)?.name : ''}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={editForm.date} onChange={e => setEditForm({ ...editForm, date: e.target.value })} /></div>
-              <div className="space-y-2"><Label>الوقت</Label><Input type="time" value={editForm.time} onChange={e => setEditForm({ ...editForm, time: e.target.value })} /></div>
-              <div className="space-y-2"><Label>المدة (دقيقة)</Label><Input type="number" value={editForm.duration} onChange={e => setEditForm({ ...editForm, duration: e.target.value })} /></div>
-            </div>
+            <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={editForm.date} onChange={e => setEditForm({ ...editForm, date: e.target.value })} /></div>
             <div className="space-y-2"><Label>النوع</Label><Input value={editForm.type} onChange={e => setEditForm({ ...editForm, type: e.target.value })} /></div>
             <div className="space-y-2">
               <Label>الحالة</Label>

@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Plus, Printer, Heart, Droplets, AlertTriangle, FileText } from 'lucide-react';
+import { ArrowRight, Plus, Printer, Heart, MapPin } from 'lucide-react';
 import Invoice from '@/components/Invoice';
 
 interface Props { patientId: string; onBack: () => void; }
@@ -32,7 +32,18 @@ export default function PatientDetail({ patientId, onBack }: Props) {
   const [tForm, setTForm] = useState({ description: '', tooth: '', cost: '', date: new Date().toISOString().split('T')[0], notes: '' });
   const [pForm, setPForm] = useState({ amount: '', date: new Date().toISOString().split('T')[0], method: 'cash' as 'cash' | 'card' | 'insurance', note: '' });
 
-  const age = patient.dateOfBirth ? Math.floor((Date.now() - new Date(patient.dateOfBirth).getTime()) / 31557600000) : 'غير محدد';
+  // Parse age and country from medicalHistory
+  const parseMedicalHistory = (mh: string) => {
+    const lines = mh.split('\n');
+    let age = 'غير محدد';
+    let country = 'غير محدد';
+    for (const line of lines) {
+      if (line.startsWith('السن:')) age = line.replace('السن:', '').trim();
+      if (line.startsWith('البلد:')) country = line.replace('البلد:', '').trim();
+    }
+    return { age, country };
+  };
+  const { age, country } = parseMedicalHistory(patient.medicalHistory || '');
 
   const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
   const apptStatusAr = (s: string) => s === 'scheduled' ? 'مجدول' : s === 'completed' ? 'مكتمل' : s === 'cancelled' ? 'ملغي' : 'لم يحضر';
@@ -64,7 +75,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
         <Button variant="ghost" onClick={onBack}><ArrowRight className="ml-2 h-4 w-4" /> رجوع</Button>
         <div className="flex-1">
           <h1 className="text-2xl font-bold">{patient.name}</h1>
-          <p className="text-muted-foreground">{patient.phone} · {patient.email}</p>
+          <p className="text-muted-foreground">{patient.phone}</p>
         </div>
         <Button variant="outline" onClick={() => setShowInvoice(true)}><Printer className="ml-2 h-4 w-4" /> فاتورة</Button>
       </div>
@@ -87,13 +98,10 @@ export default function PatientDetail({ patientId, onBack }: Props) {
         <TabsContent value="demographics">
           <Card>
             <CardContent className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
                 <div className="flex items-center gap-3"><Heart className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">العمر</p><p className="font-medium">{age} سنة</p></div></div>
-                <div className="flex items-center gap-3"><Droplets className="h-5 w-5 text-destructive" /><div><p className="text-xs text-muted-foreground">فصيلة الدم</p><p className="font-medium">{patient.bloodType || 'غير محدد'}</p></div></div>
-                <div className="flex items-center gap-3"><AlertTriangle className="h-5 w-5 text-destructive" /><div><p className="text-xs text-muted-foreground">الحساسية</p><p className="font-medium">{patient.allergies || 'لا يوجد'}</p></div></div>
-                <div className="flex items-center gap-3"><FileText className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">تاريخ الميلاد</p><p className="font-medium">{patient.dateOfBirth || 'غير محدد'}</p></div></div>
+                <div className="flex items-center gap-3"><MapPin className="h-5 w-5 text-primary" /><div><p className="text-xs text-muted-foreground">البلد</p><p className="font-medium">{country}</p></div></div>
               </div>
-              <div className="mt-6"><p className="text-sm text-muted-foreground mb-1">التاريخ المرضي</p><p className="text-sm">{patient.medicalHistory || 'لا توجد سجلات'}</p></div>
             </CardContent>
           </Card>
         </TabsContent>

@@ -16,13 +16,13 @@ import { Plus, Search } from 'lucide-react';
 interface Props { onViewPatient: (id: string) => void; }
 
 export default function Patients({ onViewPatient }: Props) {
-  const { patients, treatments, payments, isDoctor, addPatient, addAppointment, appointments } = useApp();
+  const { patients, treatments, payments, isDoctor, addPatient, addAppointment, addTreatment, appointments } = useApp();
   const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const today = new Date().toISOString().split('T')[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-  const [form, setForm] = useState({ name: '', phone: '', age: '', country: '', appointmentDate: '' });
+  const [form, setForm] = useState({ name: '', phone: '', age: '', country: '', appointmentDate: '', examFee: '' });
 
   const filtered = patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.phone.includes(search));
 
@@ -35,11 +35,17 @@ export default function Patients({ onViewPatient }: Props) {
 
   const handleAdd = async () => {
     if (!form.name.trim() || !form.phone.trim()) { toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' }); return; }
-    const patientId = await addPatient({ ...form, email: '', bloodType: '', dateOfBirth: '', allergies: '', medicalHistory: form.country ? `البلد: ${form.country}` : '' });
-    if (patientId && form.appointmentDate) {
-      addAppointment({ patientId, date: form.appointmentDate, time: '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
+    const medicalHistory = [form.country ? `البلد: ${form.country}` : '', form.age ? `السن: ${form.age}` : ''].filter(Boolean).join('\n');
+    const patientId = await addPatient({ ...form, email: '', bloodType: '', dateOfBirth: '', allergies: '', medicalHistory });
+    if (patientId) {
+      if (form.examFee && parseFloat(form.examFee) > 0) {
+        addTreatment({ patientId, description: 'كشف', cost: parseFloat(form.examFee), date: new Date().toISOString().split('T')[0], notes: '', tooth: undefined });
+      }
+      if (form.appointmentDate) {
+        addAppointment({ patientId, date: form.appointmentDate, time: '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
+      }
     }
-    setForm({ name: '', phone: '', age: '', country: '', appointmentDate: '' });
+    setForm({ name: '', phone: '', age: '', country: '', appointmentDate: '', examFee: '' });
     setShowAdd(false);
     toast({ title: 'تم بنجاح', description: form.appointmentDate ? 'تمت إضافة المريض وحجز الموعد' : 'تمت إضافة المريض بنجاح' });
   };
@@ -109,9 +115,10 @@ export default function Patients({ onViewPatient }: Props) {
               <div className="space-y-2"><Label>الاسم الكامل *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
               <div className="space-y-2"><Label>الهاتف *</Label><Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2"><Label>السن</Label><Input type="number" value={form.age} onChange={e => setForm({ ...form, age: e.target.value })} placeholder="مثال: 30" /></div>
               <div className="space-y-2"><Label>البلد</Label><Input value={form.country} onChange={e => setForm({ ...form, country: e.target.value })} placeholder="مثال: مصر" /></div>
+              <div className="space-y-2"><Label>سعر الكشف</Label><Input type="number" value={form.examFee} onChange={e => setForm({ ...form, examFee: e.target.value })} placeholder="0.00" /></div>
             </div>
             <div className="border-t pt-4 mt-2">
               <p className="text-sm font-medium mb-3">موعد الكشف (اختياري)</p>

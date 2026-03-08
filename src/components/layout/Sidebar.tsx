@@ -35,7 +35,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
           {!collapsed && (
             <div className="min-w-0">
               <h1 className="font-bold text-sidebar-primary-foreground text-base truncate">عيادة الأسنان</h1>
-              <p className="text-[10px] text-sidebar-foreground/60 truncate">نظام إدارة العيادة</p>
+              <p className="text-[10px] text-sidebar-foreground/80 truncate">نظام إدارة العيادة</p>
             </div>
           )}
         </div>

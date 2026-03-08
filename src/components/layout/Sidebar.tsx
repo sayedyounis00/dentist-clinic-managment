@@ -65,7 +65,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
                     : 'text-sidebar-accent-foreground hover:bg-sidebar-accent hover:text-sidebar-primary'
                 )}
               >
-                <item.icon className="h-4 w-4 shrink-0" />
+                <item.icon className="h-5 w-5 shrink-0" />
                 {!collapsed && item.label}
               </button>
             );

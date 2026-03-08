@@ -1,0 +1,1 @@
+TRUNCATE public.appointments, public.treatments, public.payments, public.patients, public.clinic_users CASCADE;

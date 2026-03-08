@@ -39,7 +39,7 @@ export default function Patients({ onViewPatient }: Props) {
     if (patientId && form.appointmentDate) {
       addAppointment({ patientId, date: form.appointmentDate, time: '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
     }
-    setForm({ name: '', phone: '', dateOfBirth: '', medicalHistory: '', allergies: '', appointmentDate: '' });
+    setForm({ name: '', phone: '', medicalHistory: '', appointmentDate: '' });
     setShowAdd(false);
     toast({ title: 'تم بنجاح', description: form.appointmentDate ? 'تمت إضافة المريض وحجز الموعد' : 'تمت إضافة المريض بنجاح' });
   };

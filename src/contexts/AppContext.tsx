@@ -23,6 +23,7 @@ interface AppContextType {
   appointments: Appointment[];
   addAppointment: (a: Omit<Appointment, 'id' | 'createdBy'>) => void;
   updateAppointment: (a: Appointment) => void;
+  deleteAppointment: (id: string) => Promise<boolean>;
   loading: boolean;
 }
 

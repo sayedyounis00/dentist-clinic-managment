@@ -19,8 +19,8 @@ export default function AppointmentsPage() {
   const [showEdit, setShowEdit] = useState(false);
   const [editingAppt, setEditingAppt] = useState<Appointment | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [form, setForm] = useState({ patientId: '', date: selectedDate, time: '09:00', duration: '30', type: 'كشف', notes: '' });
-  const [editForm, setEditForm] = useState({ date: '', time: '', duration: '', type: '', notes: '', status: '' as string });
+  const [form, setForm] = useState({ patientId: '', date: selectedDate, type: 'كشف', notes: '' });
+  const [editForm, setEditForm] = useState({ date: '', type: '', notes: '', status: '' as string });
 
   const today = new Date().toISOString().split('T')[0];
 

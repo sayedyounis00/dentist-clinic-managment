@@ -68,8 +68,8 @@ export default function Patients({ onViewPatient }: Props) {
                 <TableHead>الاسم</TableHead>
                 <TableHead>الهاتف</TableHead>
                 <TableHead>آخر زيارة</TableHead>
-                {isDoctor && <TableHead>الرصيد</TableHead>}
-                {isDoctor && <TableHead>الحالة</TableHead>}
+                <TableHead>الرصيد</TableHead>
+                <TableHead>الحالة</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

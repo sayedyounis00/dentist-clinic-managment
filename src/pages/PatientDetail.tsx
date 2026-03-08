@@ -197,8 +197,8 @@ export default function PatientDetail({ patientId, onBack }: Props) {
                 <div className="space-y-3">
                   {ptAppts.map(a => (
                     <div key={a.id} className="flex items-center justify-between rounded-lg border p-3">
-                      <div><p className="font-medium text-sm">{a.type}</p><p className="text-xs text-muted-foreground">{a.notes}</p></div>
-                      <div className="text-left"><p className="text-sm">{a.date} في {a.time}</p>
+                     <div><p className="font-medium text-sm">{a.type}</p><p className="text-xs text-muted-foreground">{a.notes}</p></div>
+                      <div className="text-left"><p className="text-sm">{a.date}</p>
                         <Badge variant={a.status === 'completed' ? 'default' : a.status === 'cancelled' ? 'destructive' : 'secondary'}>{apptStatusAr(a.status)}</Badge>
                       </div>
                     </div>

@@ -19,8 +19,8 @@ export default function AppointmentsPage() {
   const [showEdit, setShowEdit] = useState(false);
   const [editingAppt, setEditingAppt] = useState<Appointment | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [form, setForm] = useState({ patientId: '', date: selectedDate, time: '09:00', duration: '30', type: 'كشف', notes: '' });
-  const [editForm, setEditForm] = useState({ date: '', time: '', duration: '', type: '', notes: '', status: '' as string });
+  const [form, setForm] = useState({ patientId: '', date: selectedDate, type: 'كشف', notes: '' });
+  const [editForm, setEditForm] = useState({ date: '', type: '', notes: '', status: '' as string });
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -45,8 +45,7 @@ export default function AppointmentsPage() {
   };
 
   const filtered = appointments
-    .filter(a => a.date === selectedDate)
-    .sort((a, b) => a.time.localeCompare(b.time));
+    .filter(a => a.date === selectedDate);
 
   const todayAppointments = appointments.filter(a => a.date === today);
   const scheduledCount = todayAppointments.filter(a => a.status === 'scheduled').length;
@@ -107,8 +106,6 @@ export default function AppointmentsPage() {
     setEditingAppt(appt);
     setEditForm({
       date: appt.date,
-      time: appt.time,
-      duration: appt.duration.toString(),
       type: appt.type,
       notes: appt.notes,
       status: appt.status,
@@ -121,8 +118,6 @@ export default function AppointmentsPage() {
     updateAppointment({
       ...editingAppt,
       date: editForm.date,
-      time: editForm.time,
-      duration: parseInt(editForm.duration),
       type: editForm.type,
       notes: editForm.notes,
       status: editForm.status as Appointment['status'],
@@ -134,9 +129,9 @@ export default function AppointmentsPage() {
 
   const handleAdd = () => {
     if (!form.patientId || !form.type) { toast({ title: 'خطأ', description: 'المريض ونوع الموعد مطلوبان', variant: 'destructive' }); return; }
-    addAppointment({ patientId: form.patientId, date: form.date, time: form.time, duration: parseInt(form.duration), type: form.type, status: 'scheduled', notes: form.notes });
+    addAppointment({ patientId: form.patientId, date: form.date, time: '00:00', duration: 0, type: form.type, status: 'scheduled', notes: form.notes });
     setShowAdd(false);
-    setForm({ patientId: '', date: selectedDate, time: '09:00', duration: '30', type: 'كشف', notes: '' });
+    setForm({ patientId: '', date: selectedDate, type: 'كشف', notes: '' });
     toast({ title: 'تم بنجاح', description: 'تم جدولة الموعد' });
   };
 
@@ -199,11 +194,6 @@ export default function AppointmentsPage() {
           return (
             <Card key={a.id} className="overflow-hidden">
               <CardContent className="flex items-center gap-4 p-4">
-                <div className="flex flex-col items-center min-w-[60px]">
-                  <p className="text-lg font-bold">{formatTime(a.time)}</p>
-                  <p className="text-xs text-muted-foreground">{a.duration} د</p>
-                </div>
-                <div className="w-px h-10 bg-border" />
                 {statusIcon(a.status)}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -244,11 +234,7 @@ export default function AppointmentsPage() {
                 <SelectContent>{patients.map(p => <SelectItem key={p.id} value={p.id}>{p.name} - {p.phone}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} /></div>
-              <div className="space-y-2"><Label>الوقت</Label><Input type="time" value={form.time} onChange={e => setForm({ ...form, time: e.target.value })} /></div>
-              <div className="space-y-2"><Label>المدة (دقيقة)</Label><Input type="number" value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })} /></div>
-            </div>
+            <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} /></div>
             <div className="space-y-2"><Label>النوع *</Label><Input value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} placeholder="مثال: كشف، تنظيف، متابعة" /></div>
             <div className="space-y-2"><Label>ملاحظات</Label><Textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} /></div>
           </div>
@@ -264,11 +250,7 @@ export default function AppointmentsPage() {
             <DialogDescription>تعديل بيانات الموعد لـ {editingAppt ? patients.find(p => p.id === editingAppt.patientId)?.name : ''}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={editForm.date} onChange={e => setEditForm({ ...editForm, date: e.target.value })} /></div>
-              <div className="space-y-2"><Label>الوقت</Label><Input type="time" value={editForm.time} onChange={e => setEditForm({ ...editForm, time: e.target.value })} /></div>
-              <div className="space-y-2"><Label>المدة (دقيقة)</Label><Input type="number" value={editForm.duration} onChange={e => setEditForm({ ...editForm, duration: e.target.value })} /></div>
-            </div>
+            <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={editForm.date} onChange={e => setEditForm({ ...editForm, date: e.target.value })} /></div>
             <div className="space-y-2"><Label>النوع</Label><Input value={editForm.type} onChange={e => setEditForm({ ...editForm, type: e.target.value })} /></div>
             <div className="space-y-2">
               <Label>الحالة</Label>

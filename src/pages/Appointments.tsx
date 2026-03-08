@@ -129,9 +129,9 @@ export default function AppointmentsPage() {
 
   const handleAdd = () => {
     if (!form.patientId || !form.type) { toast({ title: 'خطأ', description: 'المريض ونوع الموعد مطلوبان', variant: 'destructive' }); return; }
-    addAppointment({ patientId: form.patientId, date: form.date, time: form.time, duration: parseInt(form.duration), type: form.type, status: 'scheduled', notes: form.notes });
+    addAppointment({ patientId: form.patientId, date: form.date, time: '00:00', duration: 0, type: form.type, status: 'scheduled', notes: form.notes });
     setShowAdd(false);
-    setForm({ patientId: '', date: selectedDate, time: '09:00', duration: '30', type: 'كشف', notes: '' });
+    setForm({ patientId: '', date: selectedDate, type: 'كشف', notes: '' });
     toast({ title: 'تم بنجاح', description: 'تم جدولة الموعد' });
   };
 

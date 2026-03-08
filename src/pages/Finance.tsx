@@ -37,24 +37,24 @@ export default function Finance() {
       <div><h1 className="text-2xl font-bold">المالية</h1><p className="text-muted-foreground">الإيرادات والنظرة المالية العامة للعيادة</p></div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><Wallet className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">إجمالي المحصّل</p><p className="text-2xl font-bold">{totalCollected.toLocaleString()} ر.س</p></div></CardContent></Card>
-        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><TrendingUp className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-2xl font-bold">{totalCharged.toLocaleString()} ر.س</p></div></CardContent></Card>
-        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10"><Wallet className="h-6 w-6 text-destructive" /></div><div><p className="text-sm text-muted-foreground">إجمالي المستحق</p><p className="text-2xl font-bold">{totalOwed.toLocaleString()} ر.س</p></div></CardContent></Card>
+        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><Wallet className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">إجمالي المحصّل</p><p className="text-2xl font-bold">{totalCollected.toLocaleString()} ج.م</p></div></CardContent></Card>
+        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><TrendingUp className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-2xl font-bold">{totalCharged.toLocaleString()} ج.م</p></div></CardContent></Card>
+        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10"><Wallet className="h-6 w-6 text-destructive" /></div><div><p className="text-sm text-muted-foreground">إجمالي المستحق</p><p className="text-2xl font-bold">{totalOwed.toLocaleString()} ج.م</p></div></CardContent></Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">اليوم</p><p className="text-xl font-bold">{todayRev.toLocaleString()} ر.س</p></CardContent></Card>
-        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">هذا الأسبوع</p><p className="text-xl font-bold">{weekRev.toLocaleString()} ر.س</p></CardContent></Card>
-        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">هذا الشهر</p><p className="text-xl font-bold">{monthRev.toLocaleString()} ر.س</p></CardContent></Card>
+        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">اليوم</p><p className="text-xl font-bold">{todayRev.toLocaleString()} ج.م</p></CardContent></Card>
+        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">هذا الأسبوع</p><p className="text-xl font-bold">{weekRev.toLocaleString()} ج.م</p></CardContent></Card>
+        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">هذا الشهر</p><p className="text-xl font-bold">{monthRev.toLocaleString()} ج.م</p></CardContent></Card>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader><CardTitle className="text-lg">تفصيل طرق الدفع</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-primary" /><span>نقداً</span></div><span className="font-bold">{cashTotal.toLocaleString()} ر.س</span></div>
-            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /><span>بطاقة</span></div><span className="font-bold">{cardTotal.toLocaleString()} ر.س</span></div>
-            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /><span>تأمين</span></div><span className="font-bold">{insuranceTotal.toLocaleString()} ر.س</span></div>
+            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-primary" /><span>نقداً</span></div><span className="font-bold">{cashTotal.toLocaleString()} ج.م</span></div>
+            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /><span>بطاقة</span></div><span className="font-bold">{cardTotal.toLocaleString()} ج.م</span></div>
+            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /><span>تأمين</span></div><span className="font-bold">{insuranceTotal.toLocaleString()} ج.م</span></div>
             {totalCollected > 0 && (
               <div className="mt-4 flex h-4 overflow-hidden rounded-full bg-muted">
                 <div className="bg-primary" style={{ width: `${(cashTotal / totalCollected) * 100}%` }} />
@@ -73,7 +73,7 @@ export default function Finance() {
                 <TableHeader><TableRow><TableHead>المريض</TableHead><TableHead>المستحق</TableHead><TableHead>الحالة</TableHead></TableRow></TableHeader>
                 <TableBody>
                   {patientBalances.slice(0, 10).map(p => (
-                    <TableRow key={p.id}><TableCell className="font-medium">{p.name}</TableCell><TableCell>{p.balance.toLocaleString()} ر.س</TableCell><TableCell><Badge variant={p.status === 'Partial' ? 'secondary' : 'destructive'}>{statusAr(p.status)}</Badge></TableCell></TableRow>
+                    <TableRow key={p.id}><TableCell className="font-medium">{p.name}</TableCell><TableCell>{p.balance.toLocaleString()} ج.م</TableCell><TableCell><Badge variant={p.status === 'Partial' ? 'secondary' : 'destructive'}>{statusAr(p.status)}</Badge></TableCell></TableRow>
                   ))}
                 </TableBody>
               </Table>

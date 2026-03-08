@@ -77,7 +77,7 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">إيرادات اليوم</p>
-                  <p className="text-2xl font-bold">{todayRevenue.toLocaleString()} ر.س</p>
+                  <p className="text-2xl font-bold">{todayRevenue.toLocaleString()} ج.م</p>
                 </div>
               </CardContent>
             </Card>
@@ -88,7 +88,7 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">هذا الأسبوع</p>
-                  <p className="text-2xl font-bold">{weekRevenue.toLocaleString()} ر.س</p>
+                  <p className="text-2xl font-bold">{weekRevenue.toLocaleString()} ج.م</p>
                 </div>
               </CardContent>
             </Card>
@@ -99,7 +99,7 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">هذا الشهر</p>
-                  <p className="text-2xl font-bold">{monthRevenue.toLocaleString()} ر.س</p>
+                  <p className="text-2xl font-bold">{monthRevenue.toLocaleString()} ج.م</p>
                 </div>
               </CardContent>
             </Card>

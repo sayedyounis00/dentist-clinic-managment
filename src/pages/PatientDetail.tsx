@@ -71,9 +71,9 @@ export default function PatientDetail({ patientId, onBack }: Props) {
 
       {isDoctor && (
         <div className="grid grid-cols-4 gap-4">
-          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-xl font-bold">{fin.totalCharged.toLocaleString()} ر.س</p></CardContent></Card>
-          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي المدفوع</p><p className="text-xl font-bold">{fin.totalPaid.toLocaleString()} ر.س</p></CardContent></Card>
-          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الرصيد</p><p className="text-xl font-bold">{fin.balance.toLocaleString()} ر.س</p></CardContent></Card>
+          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-xl font-bold">{fin.totalCharged.toLocaleString()} ج.م</p></CardContent></Card>
+          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي المدفوع</p><p className="text-xl font-bold">{fin.totalPaid.toLocaleString()} ج.م</p></CardContent></Card>
+          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الرصيد</p><p className="text-xl font-bold">{fin.balance.toLocaleString()} ج.م</p></CardContent></Card>
           <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الحالة</p><Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'} className="mt-1">{statusAr(fin.status)}</Badge></CardContent></Card>
         </div>
       )}
@@ -111,7 +111,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
                 <TableHeader><TableRow><TableHead>التاريخ</TableHead><TableHead>الوصف</TableHead><TableHead>السن</TableHead><TableHead>التكلفة</TableHead><TableHead>ملاحظات</TableHead></TableRow></TableHeader>
                 <TableBody>
                   {ptTreatments.map(t => (
-                    <TableRow key={t.id}><TableCell>{t.date}</TableCell><TableCell className="font-medium">{t.description}</TableCell><TableCell>{t.tooth || '—'}</TableCell><TableCell>{t.cost.toLocaleString()} ر.س</TableCell><TableCell className="text-muted-foreground">{t.notes}</TableCell></TableRow>
+                    <TableRow key={t.id}><TableCell>{t.date}</TableCell><TableCell className="font-medium">{t.description}</TableCell><TableCell>{t.tooth || '—'}</TableCell><TableCell>{t.cost.toLocaleString()} ج.م</TableCell><TableCell className="text-muted-foreground">{t.notes}</TableCell></TableRow>
                   ))}
                   {ptTreatments.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">لا توجد علاجات مسجلة</TableCell></TableRow>}
                 </TableBody>
@@ -131,7 +131,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
                 <TableHeader><TableRow><TableHead>التاريخ</TableHead><TableHead>المبلغ</TableHead><TableHead>الطريقة</TableHead><TableHead>ملاحظة</TableHead></TableRow></TableHeader>
                 <TableBody>
                   {ptPayments.map(p => (
-                    <TableRow key={p.id}><TableCell>{p.date}</TableCell><TableCell className="font-medium">{p.amount.toLocaleString()} ر.س</TableCell><TableCell><Badge variant="outline">{methodAr(p.method)}</Badge></TableCell><TableCell className="text-muted-foreground">{p.note}</TableCell></TableRow>
+                    <TableRow key={p.id}><TableCell>{p.date}</TableCell><TableCell className="font-medium">{p.amount.toLocaleString()} ج.م</TableCell><TableCell><Badge variant="outline">{methodAr(p.method)}</Badge></TableCell><TableCell className="text-muted-foreground">{p.note}</TableCell></TableRow>
                   ))}
                   {ptPayments.length === 0 && <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">لا توجد مدفوعات مسجلة</TableCell></TableRow>}
                 </TableBody>
@@ -178,7 +178,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
 
       <Dialog open={showPayment} onOpenChange={setShowPayment}>
         <DialogContent>
-          <DialogHeader><DialogTitle>تسجيل دفعة</DialogTitle><DialogDescription>تسجيل دفعة لـ {patient.name}. الرصيد: {fin.balance.toLocaleString()} ر.س</DialogDescription></DialogHeader>
+          <DialogHeader><DialogTitle>تسجيل دفعة</DialogTitle><DialogDescription>تسجيل دفعة لـ {patient.name}. الرصيد: {fin.balance.toLocaleString()} ج.م</DialogDescription></DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="space-y-2"><Label>المبلغ *</Label><Input type="number" value={pForm.amount} onChange={e => setPForm({ ...pForm, amount: e.target.value })} placeholder="0.00" /></div>
             <div className="grid grid-cols-2 gap-4">

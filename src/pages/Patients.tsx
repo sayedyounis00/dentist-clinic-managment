@@ -80,7 +80,7 @@ export default function Patients({ onViewPatient }: Props) {
                     <TableCell className="font-medium">{p.name}</TableCell>
                     <TableCell>{p.phone}</TableCell>
                     <TableCell>{getLastVisit(p.id)}</TableCell>
-                    {isDoctor && <TableCell>{fin.balance.toLocaleString()} ر.س</TableCell>}
+                    {isDoctor && <TableCell>{fin.balance.toLocaleString()} ج.م</TableCell>}
                     {isDoctor && <TableCell>{statusBadge(fin.status)}</TableCell>}
                   </TableRow>
                 );

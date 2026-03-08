@@ -88,7 +88,7 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">هذا الأسبوع</p>
-                  <p className="text-2xl font-bold">{weekRevenue.toLocaleString()} ر.س</p>
+                  <p className="text-2xl font-bold">{weekRevenue.toLocaleString()} ج.م</p>
                 </div>
               </CardContent>
             </Card>

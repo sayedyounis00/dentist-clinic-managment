@@ -37,9 +37,9 @@ export default function Patients({ onViewPatient }: Props) {
     if (!form.name.trim() || !form.phone.trim()) { toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' }); return; }
     const patientId = await addPatient({ ...form, email: '', bloodType: '' });
     if (patientId && form.appointmentDate) {
-      addAppointment({ patientId, date: form.appointmentDate, time: form.appointmentTime || '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
+      addAppointment({ patientId, date: form.appointmentDate, time: '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
     }
-    setForm({ name: '', phone: '', dateOfBirth: '', medicalHistory: '', allergies: '', appointmentDate: '', appointmentTime: '09:00' });
+    setForm({ name: '', phone: '', dateOfBirth: '', medicalHistory: '', allergies: '', appointmentDate: '' });
     setShowAdd(false);
     toast({ title: 'تم بنجاح', description: form.appointmentDate ? 'تمت إضافة المريض وحجز الموعد' : 'تمت إضافة المريض بنجاح' });
   };

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { getPatientFinancials } from '@/data/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowRight, Plus, Printer, Heart, MapPin, Pencil, Trash2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -27,25 +26,17 @@ export default function PatientDetail({ patientId, onBack }: Props) {
   const ptPayments = payments.filter(p => p.patientId === patientId).sort((a, b) => b.date.localeCompare(a.date));
   const ptAppts = appointments.filter(a => a.patientId === patientId).sort((a, b) => `${b.date}${b.time}`.localeCompare(`${a.date}${a.time}`));
 
-  const [showTreatment, setShowTreatment] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [showInvoice, setShowInvoice] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [tForm, setTForm] = useState({ description: '', tooth: '', cost: '', date: new Date().toISOString().split('T')[0], notes: '' });
+  const [showEditTotal, setShowEditTotal] = useState(false);
+  const [newTotal, setNewTotal] = useState('');
   const [pForm, setPForm] = useState({ amount: '', date: new Date().toISOString().split('T')[0], method: 'cash' as 'cash' | 'card' | 'insurance', note: '' });
   const [editForm, setEditForm] = useState({ name: '', phone: '', age: '', country: '' });
 
   const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
   const apptStatusAr = (s: string) => s === 'scheduled' ? 'مجدول' : s === 'completed' ? 'مكتمل' : s === 'cancelled' ? 'ملغي' : 'لم يحضر';
   const methodAr = (m: string) => m === 'cash' ? 'نقداً' : m === 'card' ? 'بطاقة' : 'تأمين';
-
-  const handleAddTreatment = () => {
-    if (!tForm.description || !tForm.cost) { toast({ title: 'خطأ', description: 'الوصف والتكلفة مطلوبان', variant: 'destructive' }); return; }
-    addTreatment({ patientId, description: tForm.description, tooth: tForm.tooth || undefined, cost: parseFloat(tForm.cost), date: tForm.date, notes: tForm.notes });
-    setTForm({ description: '', tooth: '', cost: '', date: new Date().toISOString().split('T')[0], notes: '' });
-    setShowTreatment(false);
-    toast({ title: 'تم بنجاح', description: 'تمت إضافة العلاج' });
-  };
 
   const handleAddPayment = () => {
     if (!pForm.amount || parseFloat(pForm.amount) <= 0) { toast({ title: 'خطأ', description: 'المبلغ مطلوب', variant: 'destructive' }); return; }
@@ -81,6 +72,32 @@ export default function PatientDetail({ patientId, onBack }: Props) {
     toast({ title: 'تم بنجاح', description: 'تم تحديث بيانات المريض' });
   };
 
+  const openEditTotal = () => {
+    setNewTotal(fin.totalCharged.toString());
+    setShowEditTotal(true);
+  };
+
+  const handleEditTotal = async () => {
+    const targetTotal = parseFloat(newTotal);
+    if (isNaN(targetTotal) || targetTotal < 0) {
+      toast({ title: 'خطأ', description: 'أدخل مبلغ صحيح', variant: 'destructive' });
+      return;
+    }
+    const diff = targetTotal - fin.totalCharged;
+    if (diff === 0) { setShowEditTotal(false); return; }
+    // Add a treatment to adjust the total
+    await addTreatment({
+      patientId,
+      description: diff > 0 ? 'تعديل المبلغ (زيادة)' : 'تعديل المبلغ (تخفيض)',
+      cost: diff,
+      date: new Date().toISOString().split('T')[0],
+      notes: `تعديل من ${fin.totalCharged} إلى ${targetTotal}`,
+      tooth: undefined,
+    });
+    setShowEditTotal(false);
+    toast({ title: 'تم بنجاح', description: `تم تعديل إجمالي الرسوم إلى ${targetTotal.toLocaleString()} ج.م` });
+  };
+
   const handleDeletePatient = async () => {
     const success = await deletePatient(patientId);
     if (success) {
@@ -111,7 +128,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>هل أنت متأكد من حذف هذا المريض؟</AlertDialogTitle>
-              <AlertDialogDescription>سيتم حذف المريض "{patient.name}" وجميع بياناته (العلاجات، المدفوعات، المواعيد) نهائياً. لا يمكن التراجع عن هذا الإجراء.</AlertDialogDescription>
+              <AlertDialogDescription>سيتم حذف المريض "{patient.name}" وجميع بياناته نهائياً. لا يمكن التراجع عن هذا الإجراء.</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>إلغاء</AlertDialogCancel>
@@ -123,7 +140,13 @@ export default function PatientDetail({ patientId, onBack }: Props) {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-xl font-bold">{fin.totalCharged.toLocaleString()} ج.م</p></CardContent></Card>
+        <Card className="cursor-pointer hover:ring-2 hover:ring-primary transition-all" onClick={openEditTotal}>
+          <CardContent className="p-4 text-center">
+            <p className="text-sm text-muted-foreground">إجمالي الرسوم</p>
+            <p className="text-xl font-bold">{fin.totalCharged.toLocaleString()} ج.م</p>
+            <p className="text-xs text-primary mt-1">اضغط للتعديل</p>
+          </CardContent>
+        </Card>
         <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي المدفوع</p><p className="text-xl font-bold">{fin.totalPaid.toLocaleString()} ج.م</p></CardContent></Card>
         <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الرصيد</p><p className="text-xl font-bold">{fin.balance.toLocaleString()} ج.م</p></CardContent></Card>
         <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الحالة</p><Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'} className="mt-1">{statusAr(fin.status)}</Badge></CardContent></Card>
@@ -132,7 +155,6 @@ export default function PatientDetail({ patientId, onBack }: Props) {
       <Tabs defaultValue="demographics">
         <TabsList>
           <TabsTrigger value="demographics">البيانات الشخصية</TabsTrigger>
-          <TabsTrigger value="treatments">العلاجات ({ptTreatments.length})</TabsTrigger>
           <TabsTrigger value="payments">المدفوعات ({ptPayments.length})</TabsTrigger>
           <TabsTrigger value="appointments">المواعيد ({ptAppts.length})</TabsTrigger>
         </TabsList>
@@ -148,33 +170,13 @@ export default function PatientDetail({ patientId, onBack }: Props) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="treatments">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg">العلاجات</CardTitle>
-              <Button size="sm" onClick={() => setShowTreatment(true)}><Plus className="ml-1 h-4 w-4" /> إضافة</Button>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader><TableRow><TableHead>التاريخ</TableHead><TableHead>الوصف</TableHead><TableHead>السن</TableHead><TableHead>التكلفة</TableHead><TableHead>ملاحظات</TableHead></TableRow></TableHeader>
-                <TableBody>
-                  {ptTreatments.map(t => (
-                    <TableRow key={t.id}><TableCell>{t.date}</TableCell><TableCell className="font-medium">{t.description}</TableCell><TableCell>{t.tooth || '—'}</TableCell><TableCell>{t.cost.toLocaleString()} ج.م</TableCell><TableCell className="text-muted-foreground">{t.notes}</TableCell></TableRow>
-                  ))}
-                  {ptTreatments.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">لا توجد علاجات مسجلة</TableCell></TableRow>}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         <TabsContent value="payments">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg">المدفوعات</CardTitle>
-              <Button size="sm" onClick={() => setShowPayment(true)}><Plus className="ml-1 h-4 w-4" /> إضافة دفعة</Button>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">المدفوعات</h3>
+                <Button size="sm" onClick={() => setShowPayment(true)}><Plus className="ml-1 h-4 w-4" /> إضافة دفعة</Button>
+              </div>
               <Table>
                 <TableHeader><TableRow><TableHead>التاريخ</TableHead><TableHead>المبلغ</TableHead><TableHead>الطريقة</TableHead><TableHead>ملاحظة</TableHead></TableRow></TableHeader>
                 <TableBody>
@@ -208,6 +210,24 @@ export default function PatientDetail({ patientId, onBack }: Props) {
         </TabsContent>
       </Tabs>
 
+      {/* Edit Total Dialog */}
+      <Dialog open={showEditTotal} onOpenChange={setShowEditTotal}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>تعديل إجمالي الرسوم</DialogTitle><DialogDescription>تعديل المبلغ الكلي لـ {patient.name}</DialogDescription></DialogHeader>
+          <div className="grid gap-4 py-2">
+            <div className="space-y-2">
+              <Label>المبلغ الحالي</Label>
+              <p className="text-lg font-bold">{fin.totalCharged.toLocaleString()} ج.م</p>
+            </div>
+            <div className="space-y-2">
+              <Label>المبلغ الجديد *</Label>
+              <Input type="number" value={newTotal} onChange={e => setNewTotal(e.target.value)} placeholder="0.00" />
+            </div>
+          </div>
+          <DialogFooter><Button variant="outline" onClick={() => setShowEditTotal(false)}>إلغاء</Button><Button onClick={handleEditTotal}>حفظ</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Edit Patient Dialog */}
       <Dialog open={showEdit} onOpenChange={setShowEdit}>
         <DialogContent>
@@ -223,22 +243,6 @@ export default function PatientDetail({ patientId, onBack }: Props) {
             </div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setShowEdit(false)}>إلغاء</Button><Button onClick={handleEditPatient}>حفظ التعديلات</Button></DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showTreatment} onOpenChange={setShowTreatment}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>إضافة علاج</DialogTitle><DialogDescription>تسجيل علاج جديد لـ {patient.name}</DialogDescription></DialogHeader>
-          <div className="grid gap-4 py-2">
-            <div className="space-y-2"><Label>الوصف *</Label><Input value={tForm.description} onChange={e => setTForm({ ...tForm, description: e.target.value })} placeholder="مثال: حشو عصب" /></div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>السن</Label><Input value={tForm.tooth} onChange={e => setTForm({ ...tForm, tooth: e.target.value })} placeholder="مثال: #14" /></div>
-              <div className="space-y-2"><Label>التكلفة *</Label><Input type="number" value={tForm.cost} onChange={e => setTForm({ ...tForm, cost: e.target.value })} placeholder="0.00" /></div>
-            </div>
-            <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={tForm.date} onChange={e => setTForm({ ...tForm, date: e.target.value })} /></div>
-            <div className="space-y-2"><Label>ملاحظات</Label><Textarea value={tForm.notes} onChange={e => setTForm({ ...tForm, notes: e.target.value })} /></div>
-          </div>
-          <DialogFooter><Button variant="outline" onClick={() => setShowTreatment(false)}>إلغاء</Button><Button onClick={handleAddTreatment}>إضافة العلاج</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 

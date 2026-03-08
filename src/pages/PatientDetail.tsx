@@ -104,7 +104,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg">العلاجات</CardTitle>
-              {isDoctor && <Button size="sm" onClick={() => setShowTreatment(true)}><Plus className="ml-1 h-4 w-4" /> إضافة</Button>}
+              <Button size="sm" onClick={() => setShowTreatment(true)}><Plus className="ml-1 h-4 w-4" /> إضافة</Button>
             </CardHeader>
             <CardContent>
               <Table>

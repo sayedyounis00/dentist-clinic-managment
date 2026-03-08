@@ -33,6 +33,8 @@ export default function PatientDetail({ patientId, onBack }: Props) {
   const [newTotal, setNewTotal] = useState('');
   const [pForm, setPForm] = useState({ amount: '', date: new Date().toISOString().split('T')[0], method: 'cash' as 'cash' | 'card' | 'insurance', note: '' });
   const [editForm, setEditForm] = useState({ name: '', phone: '', age: '', country: '' });
+  const [showAddAppt, setShowAddAppt] = useState(false);
+  const [apptForm, setApptForm] = useState({ date: new Date().toISOString().split('T')[0], type: 'كشف', notes: '' });
 
   const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
   const apptStatusAr = (s: string) => s === 'scheduled' ? 'مجدول' : s === 'completed' ? 'مكتمل' : s === 'cancelled' ? 'ملغي' : 'لم يحضر';

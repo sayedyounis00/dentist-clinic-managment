@@ -13,7 +13,7 @@ interface AppContextType {
   updateUser: (id: string, name: string, password: string) => void;
   isDoctor: boolean;
   patients: Patient[];
-  addPatient: (p: Omit<Patient, 'id' | 'createdAt' | 'createdBy'>) => void;
+  addPatient: (p: Omit<Patient, 'id' | 'createdAt' | 'createdBy'>) => Promise<string | null>;
   updatePatient: (p: Patient) => void;
   treatments: Treatment[];
   addTreatment: (t: Omit<Treatment, 'id' | 'addedBy'>) => void;

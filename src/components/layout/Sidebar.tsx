@@ -44,7 +44,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            className="h-7 w-7 text-sidebar-foreground hover:text-sidebar-primary hover:bg-sidebar-accent"
             onClick={() => setCollapsed(!collapsed)}
           >
             {collapsed ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}

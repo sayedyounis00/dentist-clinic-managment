@@ -131,7 +131,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
                 <TableHeader><TableRow><TableHead>التاريخ</TableHead><TableHead>المبلغ</TableHead><TableHead>الطريقة</TableHead><TableHead>ملاحظة</TableHead></TableRow></TableHeader>
                 <TableBody>
                   {ptPayments.map(p => (
-                    <TableRow key={p.id}><TableCell>{p.date}</TableCell><TableCell className="font-medium">{p.amount.toLocaleString()} ر.س</TableCell><TableCell><Badge variant="outline">{methodAr(p.method)}</Badge></TableCell><TableCell className="text-muted-foreground">{p.note}</TableCell></TableRow>
+                    <TableRow key={p.id}><TableCell>{p.date}</TableCell><TableCell className="font-medium">{p.amount.toLocaleString()} ج.م</TableCell><TableCell><Badge variant="outline">{methodAr(p.method)}</Badge></TableCell><TableCell className="text-muted-foreground">{p.note}</TableCell></TableRow>
                   ))}
                   {ptPayments.length === 0 && <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">لا توجد مدفوعات مسجلة</TableCell></TableRow>}
                 </TableBody>

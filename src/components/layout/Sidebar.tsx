@@ -35,7 +35,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
           {!collapsed && (
             <div className="min-w-0">
               <h1 className="font-bold text-sidebar-primary-foreground text-base truncate">عيادة الأسنان</h1>
-              <p className="text-[10px] text-sidebar-foreground/60 truncate">نظام إدارة العيادة</p>
+              <p className="text-[10px] text-sidebar-foreground/80 truncate">نظام إدارة العيادة</p>
             </div>
           )}
         </div>
@@ -44,7 +44,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            className="h-7 w-7 text-sidebar-foreground hover:text-sidebar-primary hover:bg-sidebar-accent"
             onClick={() => setCollapsed(!collapsed)}
           >
             {collapsed ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
@@ -62,10 +62,10 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
                   collapsed && 'justify-center px-0',
                   currentPage === item.path
                     ? 'bg-sidebar-accent text-sidebar-primary'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                    : 'text-sidebar-accent-foreground hover:bg-sidebar-accent hover:text-sidebar-primary'
                 )}
               >
-                <item.icon className="h-4 w-4 shrink-0" />
+                <item.icon className="h-5 w-5 shrink-0" />
                 {!collapsed && item.label}
               </button>
             );
@@ -86,7 +86,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
           {!collapsed && (
             <div className="mb-2 px-3">
               <p className="text-sm font-medium text-sidebar-primary-foreground truncate">{currentUser?.name}</p>
-              <p className="text-xs text-sidebar-foreground/60">{currentUser?.role === 'doctor' ? 'طبيب' : 'موظف استقبال'}</p>
+              <p className="text-xs text-sidebar-foreground/80">{currentUser?.role === 'doctor' ? 'طبيب' : 'موظف استقبال'}</p>
             </div>
           )}
           <Tooltip>
@@ -94,7 +94,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
               <Button
                 variant="ghost"
                 className={cn(
-                  'w-full gap-2 text-sidebar-foreground/70 hover:text-destructive hover:bg-sidebar-accent',
+                  'w-full gap-2 text-sidebar-accent-foreground hover:text-destructive hover:bg-sidebar-accent',
                   collapsed ? 'justify-center px-0' : 'justify-start'
                 )}
                 onClick={logout}

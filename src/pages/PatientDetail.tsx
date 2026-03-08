@@ -75,7 +75,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
         <Button variant="ghost" onClick={onBack}><ArrowRight className="ml-2 h-4 w-4" /> رجوع</Button>
         <div className="flex-1">
           <h1 className="text-2xl font-bold">{patient.name}</h1>
-          <p className="text-muted-foreground">{patient.phone} · {patient.email}</p>
+          <p className="text-muted-foreground">{patient.phone}</p>
         </div>
         <Button variant="outline" onClick={() => setShowInvoice(true)}><Printer className="ml-2 h-4 w-4" /> فاتورة</Button>
       </div>

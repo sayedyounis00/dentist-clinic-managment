@@ -16,11 +16,11 @@ import { Plus, Search } from 'lucide-react';
 interface Props { onViewPatient: (id: string) => void; }
 
 export default function Patients({ onViewPatient }: Props) {
-  const { patients, treatments, payments, isDoctor, addPatient, appointments } = useApp();
+  const { patients, treatments, payments, isDoctor, addPatient, addAppointment, appointments } = useApp();
   const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ name: '', phone: '', email: '', dateOfBirth: '', bloodType: '', medicalHistory: '', allergies: '' });
+  const [form, setForm] = useState({ name: '', phone: '', dateOfBirth: '', medicalHistory: '', allergies: '', appointmentDate: '', appointmentTime: '09:00' });
 
   const filtered = patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.phone.includes(search));
 
@@ -31,12 +31,15 @@ export default function Patients({ onViewPatient }: Props) {
 
   const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!form.name.trim() || !form.phone.trim()) { toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' }); return; }
-    addPatient(form);
-    setForm({ name: '', phone: '', email: '', dateOfBirth: '', bloodType: '', medicalHistory: '', allergies: '' });
+    const patientId = await addPatient({ ...form, email: '', bloodType: '' });
+    if (patientId && form.appointmentDate) {
+      addAppointment({ patientId, date: form.appointmentDate, time: form.appointmentTime || '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
+    }
+    setForm({ name: '', phone: '', dateOfBirth: '', medicalHistory: '', allergies: '', appointmentDate: '', appointmentTime: '09:00' });
     setShowAdd(false);
-    toast({ title: 'تم بنجاح', description: 'تمت إضافة المريض بنجاح' });
+    toast({ title: 'تم بنجاح', description: form.appointmentDate ? 'تمت إضافة المريض وحجز الموعد' : 'تمت إضافة المريض بنجاح' });
   };
 
   const statusBadge = (status: string) => {
@@ -105,22 +108,17 @@ export default function Patients({ onViewPatient }: Props) {
               <div className="space-y-2"><Label>الهاتف *</Label><Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>البريد الإلكتروني</Label><Input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /></div>
               <div className="space-y-2"><Label>تاريخ الميلاد</Label><Input type="date" value={form.dateOfBirth} onChange={e => setForm({ ...form, dateOfBirth: e.target.value })} /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>فصيلة الدم</Label>
-                <Select value={form.bloodType} onValueChange={v => setForm({ ...form, bloodType: v })}>
-                  <SelectTrigger><SelectValue placeholder="اختر" /></SelectTrigger>
-                  <SelectContent>
-                    {['A+','A-','B+','B-','AB+','AB-','O+','O-'].map(bt => <SelectItem key={bt} value={bt}>{bt}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
               <div className="space-y-2"><Label>الحساسية</Label><Input value={form.allergies} onChange={e => setForm({ ...form, allergies: e.target.value })} /></div>
             </div>
             <div className="space-y-2"><Label>التاريخ المرضي</Label><Textarea value={form.medicalHistory} onChange={e => setForm({ ...form, medicalHistory: e.target.value })} /></div>
+            <div className="border-t pt-4 mt-2">
+              <p className="text-sm font-medium mb-3">موعد الكشف (اختياري)</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2"><Label>تاريخ الموعد</Label><Input type="date" value={form.appointmentDate} onChange={e => setForm({ ...form, appointmentDate: e.target.value })} /></div>
+                <div className="space-y-2"><Label>الوقت</Label><Input type="time" value={form.appointmentTime} onChange={e => setForm({ ...form, appointmentTime: e.target.value })} /></div>
+              </div>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAdd(false)}>إلغاء</Button>

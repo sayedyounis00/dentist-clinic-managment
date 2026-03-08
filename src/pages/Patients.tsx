@@ -33,18 +33,13 @@ export default function Patients({ onViewPatient }: Props) {
 
   const handleAdd = async () => {
     if (!form.name.trim() || !form.phone.trim()) { toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' }); return; }
-    addPatient({ ...form, email: '', bloodType: '' });
-    // If appointment date is set, create an appointment
-    if (form.appointmentDate) {
-      // We need to wait briefly for the patient to be added, then find them
-      setTimeout(() => {
-        const newPatient = patients.find(p => p.phone === form.phone && p.name === form.name);
-        // Will be handled after state updates
-      }, 100);
+    const patientId = await addPatient({ ...form, email: '', bloodType: '' });
+    if (patientId && form.appointmentDate) {
+      addAppointment({ patientId, date: form.appointmentDate, time: form.appointmentTime || '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
     }
     setForm({ name: '', phone: '', dateOfBirth: '', medicalHistory: '', allergies: '', appointmentDate: '', appointmentTime: '09:00' });
     setShowAdd(false);
-    toast({ title: 'تم بنجاح', description: 'تمت إضافة المريض بنجاح' });
+    toast({ title: 'تم بنجاح', description: form.appointmentDate ? 'تمت إضافة المريض وحجز الموعد' : 'تمت إضافة المريض بنجاح' });
   };
 
   const statusBadge = (status: string) => {

@@ -165,6 +165,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (data) setAppointments(prev => prev.map(ap => ap.id === a.id ? mapAppointment(data) : ap));
   }, []);
 
+  const deleteAppointment = useCallback(async (id: string): Promise<boolean> => {
+    const { error } = await supabase.from('appointments').delete().eq('id', id);
+    if (!error) {
+      setAppointments(prev => prev.filter(a => a.id !== id));
+      return true;
+    }
+    return false;
+  }, []);
+
   return (
     <AppContext.Provider value={{
       currentUser, users, login, logout, registerDoctor, addReceptionist, updateUser, isDoctor,

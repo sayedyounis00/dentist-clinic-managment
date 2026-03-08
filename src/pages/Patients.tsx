@@ -116,9 +116,12 @@ export default function Patients({ onViewPatient }: Props) {
             <div className="space-y-2"><Label>التاريخ المرضي</Label><Textarea value={form.medicalHistory} onChange={e => setForm({ ...form, medicalHistory: e.target.value })} /></div>
             <div className="border-t pt-4 mt-2">
               <p className="text-sm font-medium mb-3">موعد الكشف (اختياري)</p>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>تاريخ الموعد</Label><Input type="date" value={form.appointmentDate} onChange={e => setForm({ ...form, appointmentDate: e.target.value })} /></div>
-                <div className="space-y-2"><Label>الوقت</Label><Input type="time" value={form.appointmentTime} onChange={e => setForm({ ...form, appointmentTime: e.target.value })} /></div>
+              <div className="flex gap-2 flex-wrap">
+                <Button type="button" size="sm" variant={form.appointmentDate === today ? 'default' : 'outline'} onClick={() => setForm({ ...form, appointmentDate: form.appointmentDate === today ? '' : today })}>اليوم</Button>
+                <Button type="button" size="sm" variant={form.appointmentDate === tomorrow ? 'default' : 'outline'} onClick={() => setForm({ ...form, appointmentDate: form.appointmentDate === tomorrow ? '' : tomorrow })}>غداً</Button>
+                <div className="flex items-center gap-2">
+                  <Input type="date" className="w-auto" value={form.appointmentDate !== today && form.appointmentDate !== tomorrow ? form.appointmentDate : ''} onChange={e => setForm({ ...form, appointmentDate: e.target.value })} />
+                </div>
               </div>
             </div>
           </div>

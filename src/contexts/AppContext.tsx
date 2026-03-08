@@ -97,6 +97,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const { data } = await supabase.from('patients').insert({
       name: p.name, phone: p.phone, email: p.email, date_of_birth: p.dateOfBirth,
       blood_type: p.bloodType, medical_history: p.medicalHistory, allergies: p.allergies,
+      age: p.age, country: p.country,
       created_by: currentUser?.id,
     }).select().single();
     if (data) {

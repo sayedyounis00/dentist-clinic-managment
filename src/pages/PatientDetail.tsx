@@ -71,9 +71,9 @@ export default function PatientDetail({ patientId, onBack }: Props) {
 
       {isDoctor && (
         <div className="grid grid-cols-4 gap-4">
-          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-xl font-bold">{fin.totalCharged.toLocaleString()} ر.س</p></CardContent></Card>
-          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي المدفوع</p><p className="text-xl font-bold">{fin.totalPaid.toLocaleString()} ر.س</p></CardContent></Card>
-          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الرصيد</p><p className="text-xl font-bold">{fin.balance.toLocaleString()} ر.س</p></CardContent></Card>
+          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-xl font-bold">{fin.totalCharged.toLocaleString()} ج.م</p></CardContent></Card>
+          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">إجمالي المدفوع</p><p className="text-xl font-bold">{fin.totalPaid.toLocaleString()} ج.م</p></CardContent></Card>
+          <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الرصيد</p><p className="text-xl font-bold">{fin.balance.toLocaleString()} ج.م</p></CardContent></Card>
           <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">الحالة</p><Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'} className="mt-1">{statusAr(fin.status)}</Badge></CardContent></Card>
         </div>
       )}

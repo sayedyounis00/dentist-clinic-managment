@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { LayoutDashboard, Users, CalendarDays, Wallet, UserCog, LogOut, Stethoscope, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navItems = [
   { label: 'لوحة التحكم', icon: LayoutDashboard, path: 'dashboard', doctorOnly: false },

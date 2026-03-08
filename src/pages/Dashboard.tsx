@@ -2,7 +2,7 @@ import { useApp } from '@/contexts/AppContext';
 import { getPatientFinancials } from '@/data/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Users, DollarSign, Clock, AlertCircle } from 'lucide-react';
+import { CalendarDays, Users, Wallet, Clock, AlertCircle } from 'lucide-react';
 
 interface Props {
   onViewPatient: (id: string) => void;
@@ -34,21 +34,23 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
 
   const recentPatients = [...patients].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 5);
 
+  const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back! Here's your clinic overview.</p>
+        <h1 className="text-2xl font-bold">لوحة التحكم</h1>
+        <p className="text-muted-foreground">مرحباً بك! هذه نظرة عامة على عيادتك.</p>
       </div>
 
       <div className={`grid gap-4 ${isDoctor ? 'md:grid-cols-5' : 'md:grid-cols-2'}`}>
         <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('appointments')}>
           <CardContent className="flex items-center gap-4 p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <Calendar className="h-6 w-6 text-primary" />
+              <CalendarDays className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Today's Appointments</p>
+              <p className="text-sm text-muted-foreground">مواعيد اليوم</p>
               <p className="text-2xl font-bold">{todayAppts.length}</p>
             </div>
           </CardContent>
@@ -60,7 +62,7 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
               <AlertCircle className="h-6 w-6 text-destructive" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Pending Payments</p>
+              <p className="text-sm text-muted-foreground">مدفوعات معلقة</p>
               <p className="text-2xl font-bold">{pendingPayments.length}</p>
             </div>
           </CardContent>
@@ -71,33 +73,33 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
             <Card>
               <CardContent className="flex items-center gap-4 p-6">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <DollarSign className="h-6 w-6 text-primary" />
+                  <Wallet className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Today's Revenue</p>
-                  <p className="text-2xl font-bold">${todayRevenue.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">إيرادات اليوم</p>
+                  <p className="text-2xl font-bold">{todayRevenue.toLocaleString()} ر.س</p>
                 </div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="flex items-center gap-4 p-6">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <DollarSign className="h-6 w-6 text-primary" />
+                  <Wallet className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">This Week</p>
-                  <p className="text-2xl font-bold">${weekRevenue.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">هذا الأسبوع</p>
+                  <p className="text-2xl font-bold">{weekRevenue.toLocaleString()} ر.س</p>
                 </div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="flex items-center gap-4 p-6">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <DollarSign className="h-6 w-6 text-primary" />
+                  <Wallet className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">This Month</p>
-                  <p className="text-2xl font-bold">${monthRevenue.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">هذا الشهر</p>
+                  <p className="text-2xl font-bold">{monthRevenue.toLocaleString()} ر.س</p>
                 </div>
               </CardContent>
             </Card>
@@ -109,12 +111,12 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Clock className="h-5 w-5 text-primary" /> Upcoming Appointments
+              <Clock className="h-5 w-5 text-primary" /> المواعيد القادمة
             </CardTitle>
           </CardHeader>
           <CardContent>
             {upcoming.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No upcoming appointments</p>
+              <p className="text-muted-foreground text-sm">لا توجد مواعيد قادمة</p>
             ) : (
               <div className="space-y-3">
                 {upcoming.map(a => {
@@ -125,9 +127,9 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
                         <p className="font-medium text-sm">{patient?.name}</p>
                         <p className="text-xs text-muted-foreground">{a.type} · {a.notes}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="text-left">
                         <p className="text-sm font-medium">{a.time}</p>
-                        <p className="text-xs text-muted-foreground">{a.date === today ? 'Today' : a.date}</p>
+                        <p className="text-xs text-muted-foreground">{a.date === today ? 'اليوم' : a.date}</p>
                       </div>
                     </div>
                   );
@@ -140,7 +142,7 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Users className="h-5 w-5 text-primary" /> Recent Patients
+              <Users className="h-5 w-5 text-primary" /> المرضى الجدد
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -155,7 +157,7 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
                     </div>
                     {isDoctor && (
                       <Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'}>
-                        {fin.status}
+                        {statusAr(fin.status)}
                       </Badge>
                     )}
                   </div>

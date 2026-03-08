@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Stethoscope, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2 } from 'lucide-react';
 
 export default function Login() {
   const { users, login, registerDoctor, loading } = useApp();
@@ -31,25 +31,25 @@ export default function Login() {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary">
-              <Stethoscope className="h-7 w-7 text-primary-foreground" />
+              <Sparkles className="h-7 w-7 text-primary-foreground" />
             </div>
-            <CardTitle className="text-2xl">Dental Clinic Setup</CardTitle>
-            <CardDescription>Register the Doctor account to get started</CardDescription>
+            <CardTitle className="text-2xl">إعداد عيادة الأسنان</CardTitle>
+            <CardDescription>سجّل حساب الطبيب للبدء</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Full Name</Label>
-              <Input value={regName} onChange={e => setRegName(e.target.value)} placeholder="Dr. Full Name" />
+              <Label>الاسم الكامل</Label>
+              <Input value={regName} onChange={e => setRegName(e.target.value)} placeholder="د. الاسم الكامل" />
             </div>
             <div className="space-y-2">
-              <Label>Password</Label>
-              <Input type="password" value={regPassword} onChange={e => setRegPassword(e.target.value)} placeholder="Choose a password" />
+              <Label>كلمة المرور</Label>
+              <Input type="password" value={regPassword} onChange={e => setRegPassword(e.target.value)} placeholder="اختر كلمة مرور" />
             </div>
             <Button className="w-full" onClick={() => {
-              if (!regName.trim() || !regPassword.trim()) { toast({ title: 'Error', description: 'All fields required', variant: 'destructive' }); return; }
+              if (!regName.trim() || !regPassword.trim()) { toast({ title: 'خطأ', description: 'جميع الحقول مطلوبة', variant: 'destructive' }); return; }
               registerDoctor(regName.trim(), regPassword.trim());
-              toast({ title: 'Welcome!', description: 'Doctor account created successfully' });
-            }}>Create Doctor Account</Button>
+              toast({ title: 'مرحباً!', description: 'تم إنشاء حساب الطبيب بنجاح' });
+            }}>إنشاء حساب الطبيب</Button>
           </CardContent>
         </Card>
       </div>
@@ -61,35 +61,35 @@ export default function Login() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary">
-            <Stethoscope className="h-7 w-7 text-primary-foreground" />
+            <Sparkles className="h-7 w-7 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl">Dental Clinic</CardTitle>
-          <CardDescription>Sign in to your account</CardDescription>
+          <CardTitle className="text-2xl">عيادة الأسنان</CardTitle>
+          <CardDescription>سجّل الدخول إلى حسابك</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Select User</Label>
+            <Label>اختر المستخدم</Label>
             <Select value={selectedUserId} onValueChange={setSelectedUserId}>
-              <SelectTrigger><SelectValue placeholder="Choose your account" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="اختر حسابك" /></SelectTrigger>
               <SelectContent>
                 {users.map(u => (
                   <SelectItem key={u.id} value={u.id}>
-                    {u.name} ({u.role})
+                    {u.name} ({u.role === 'doctor' ? 'طبيب' : 'موظف استقبال'})
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Password</Label>
-            <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password"
+            <Label>كلمة المرور</Label>
+            <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="أدخل كلمة المرور"
               onKeyDown={e => { if (e.key === 'Enter') document.getElementById('login-btn')?.click(); }} />
           </div>
           <Button id="login-btn" className="w-full" onClick={() => {
-            if (!selectedUserId) { toast({ title: 'Error', description: 'Please select a user', variant: 'destructive' }); return; }
+            if (!selectedUserId) { toast({ title: 'خطأ', description: 'الرجاء اختيار مستخدم', variant: 'destructive' }); return; }
             const ok = login(selectedUserId, password);
-            if (!ok) toast({ title: 'Error', description: 'Incorrect password', variant: 'destructive' });
-          }}>Sign In</Button>
+            if (!ok) toast({ title: 'خطأ', description: 'كلمة المرور غير صحيحة', variant: 'destructive' });
+          }}>تسجيل الدخول</Button>
         </CardContent>
       </Card>
     </div>

@@ -22,7 +22,7 @@ export default function Patients({ onViewPatient }: Props) {
   const [showAdd, setShowAdd] = useState(false);
   const today = new Date().toISOString().split('T')[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-  const [form, setForm] = useState({ name: '', phone: '', medicalHistory: '', appointmentDate: '' });
+  const [form, setForm] = useState({ name: '', phone: '', age: '', country: '', appointmentDate: '' });
 
   const filtered = patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.phone.includes(search));
 

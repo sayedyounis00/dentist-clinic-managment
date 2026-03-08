@@ -118,8 +118,6 @@ export default function AppointmentsPage() {
     updateAppointment({
       ...editingAppt,
       date: editForm.date,
-      time: editForm.time,
-      duration: parseInt(editForm.duration),
       type: editForm.type,
       notes: editForm.notes,
       status: editForm.status as Appointment['status'],

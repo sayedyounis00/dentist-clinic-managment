@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowRight, Plus, Printer, Heart, MapPin, Pencil, Trash2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -18,7 +19,7 @@ import Invoice from '@/components/Invoice';
 interface Props { patientId: string; onBack: () => void; }
 
 export default function PatientDetail({ patientId, onBack }: Props) {
-  const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment, updatePatient, deletePatient } = useApp();
+  const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment, addAppointment, updatePatient, deletePatient } = useApp();
   const { toast } = useToast();
   const patient = patients.find(p => p.id === patientId)!;
   const fin = getPatientFinancials(patientId, treatments, payments);
@@ -33,6 +34,8 @@ export default function PatientDetail({ patientId, onBack }: Props) {
   const [newTotal, setNewTotal] = useState('');
   const [pForm, setPForm] = useState({ amount: '', date: new Date().toISOString().split('T')[0], method: 'cash' as 'cash' | 'card' | 'insurance', note: '' });
   const [editForm, setEditForm] = useState({ name: '', phone: '', age: '', country: '' });
+  const [showAddAppt, setShowAddAppt] = useState(false);
+  const [apptForm, setApptForm] = useState({ date: new Date().toISOString().split('T')[0], type: 'كشف', notes: '' });
 
   const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
   const apptStatusAr = (s: string) => s === 'scheduled' ? 'مجدول' : s === 'completed' ? 'مكتمل' : s === 'cancelled' ? 'ملغي' : 'لم يحضر';
@@ -192,7 +195,11 @@ export default function PatientDetail({ patientId, onBack }: Props) {
 
         <TabsContent value="appointments">
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">المواعيد</h3>
+                <Button size="sm" onClick={() => setShowAddAppt(true)}><Plus className="ml-1 h-4 w-4" /> إضافة موعد</Button>
+              </div>
               {ptAppts.length === 0 ? <p className="text-center text-muted-foreground py-8">لا توجد مواعيد</p> : (
                 <div className="space-y-3">
                   {ptAppts.map(a => (
@@ -264,6 +271,28 @@ export default function PatientDetail({ patientId, onBack }: Props) {
             <div className="space-y-2"><Label>ملاحظة</Label><Input value={pForm.note} onChange={e => setPForm({ ...pForm, note: e.target.value })} placeholder="ملاحظة الدفع" /></div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setShowPayment(false)}>إلغاء</Button><Button onClick={handleAddPayment}>تسجيل الدفعة</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Appointment Dialog */}
+      <Dialog open={showAddAppt} onOpenChange={setShowAddAppt}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>إضافة موعد</DialogTitle><DialogDescription>إضافة موعد جديد لـ {patient.name}</DialogDescription></DialogHeader>
+          <div className="grid gap-4 py-2">
+            <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={apptForm.date} onChange={e => setApptForm({ ...apptForm, date: e.target.value })} /></div>
+            <div className="space-y-2"><Label>النوع</Label><Input value={apptForm.type} onChange={e => setApptForm({ ...apptForm, type: e.target.value })} placeholder="مثال: كشف، متابعة" /></div>
+            <div className="space-y-2"><Label>ملاحظات</Label><Textarea value={apptForm.notes} onChange={e => setApptForm({ ...apptForm, notes: e.target.value })} /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddAppt(false)}>إلغاء</Button>
+            <Button onClick={() => {
+              if (!apptForm.type) { toast({ title: 'خطأ', description: 'نوع الموعد مطلوب', variant: 'destructive' }); return; }
+              addAppointment({ patientId, date: apptForm.date, time: '00:00', duration: 0, type: apptForm.type, status: 'scheduled', notes: apptForm.notes });
+              setApptForm({ date: new Date().toISOString().split('T')[0], type: 'كشف', notes: '' });
+              setShowAddAppt(false);
+              toast({ title: 'تم بنجاح', description: 'تم إضافة الموعد' });
+            }}>إضافة</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

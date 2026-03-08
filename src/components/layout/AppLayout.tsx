@@ -14,6 +14,7 @@ export default function AppLayout() {
   const { isDoctor } = useApp();
   const [page, setPage] = useState('dashboard');
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const navigate = (p: string) => {
     setPage(p);

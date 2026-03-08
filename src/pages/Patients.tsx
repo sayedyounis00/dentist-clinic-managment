@@ -16,7 +16,7 @@ import { Plus, Search } from 'lucide-react';
 interface Props { onViewPatient: (id: string) => void; }
 
 export default function Patients({ onViewPatient }: Props) {
-  const { patients, treatments, payments, isDoctor, addPatient, appointments } = useApp();
+  const { patients, treatments, payments, isDoctor, addPatient, addAppointment, appointments } = useApp();
   const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [showAdd, setShowAdd] = useState(false);

@@ -167,7 +167,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={{
       currentUser, users, login, logout, registerDoctor, addReceptionist, updateUser, isDoctor,
-      patients, addPatient, updatePatient,
+      patients, addPatient, updatePatient, deletePatient,
       treatments, addTreatment,
       payments, addPayment,
       appointments, addAppointment, updateAppointment,

@@ -51,7 +51,7 @@ export default function Patients({ onViewPatient }: Props) {
           <h1 className="text-2xl font-bold">المرضى</h1>
           <p className="text-muted-foreground">{patients.length} مريض مسجل</p>
         </div>
-        {isDoctor && <Button onClick={() => setShowAdd(true)}><Plus className="ml-2 h-4 w-4" /> إضافة مريض</Button>}
+        <Button onClick={() => setShowAdd(true)}><Plus className="ml-2 h-4 w-4" /> إضافة مريض</Button>
       </div>
 
       <Card>
@@ -68,8 +68,8 @@ export default function Patients({ onViewPatient }: Props) {
                 <TableHead>الاسم</TableHead>
                 <TableHead>الهاتف</TableHead>
                 <TableHead>آخر زيارة</TableHead>
-                {isDoctor && <TableHead>الرصيد</TableHead>}
-                {isDoctor && <TableHead>الحالة</TableHead>}
+                <TableHead>الرصيد</TableHead>
+                <TableHead>الحالة</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -80,13 +80,13 @@ export default function Patients({ onViewPatient }: Props) {
                     <TableCell className="font-medium">{p.name}</TableCell>
                     <TableCell>{p.phone}</TableCell>
                     <TableCell>{getLastVisit(p.id)}</TableCell>
-                    {isDoctor && <TableCell>{fin.balance.toLocaleString()} ج.م</TableCell>}
-                    {isDoctor && <TableCell>{statusBadge(fin.status)}</TableCell>}
+                    <TableCell>{fin.balance.toLocaleString()} ج.م</TableCell>
+                    <TableCell>{statusBadge(fin.status)}</TableCell>
                   </TableRow>
                 );
               })}
               {filtered.length === 0 && (
-                <TableRow><TableCell colSpan={isDoctor ? 5 : 3} className="text-center text-muted-foreground py-8">لا يوجد مرضى</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">لا يوجد مرضى</TableCell></TableRow>
               )}
             </TableBody>
           </Table>

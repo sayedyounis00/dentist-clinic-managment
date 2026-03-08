@@ -43,7 +43,7 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
         <p className="text-muted-foreground">مرحباً بك! هذه نظرة عامة على عيادتك.</p>
       </div>
 
-      <div className={`grid gap-4 ${isDoctor ? 'md:grid-cols-5' : 'md:grid-cols-2'}`}>
+      <div className={`grid gap-4 ${isDoctor ? 'md:grid-cols-6' : 'md:grid-cols-3'}`}>
         <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('appointments')}>
           <CardContent className="flex items-center gap-4 p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
@@ -52,6 +52,18 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
             <div>
               <p className="text-sm text-muted-foreground">مواعيد اليوم</p>
               <p className="text-2xl font-bold">{todayAppts.length}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('patients')}>
+          <CardContent className="flex items-center gap-4 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10">
+              <Users className="h-6 w-6 text-secondary" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">إجمالي المرضى</p>
+              <p className="text-2xl font-bold">{patients.length}</p>
             </div>
           </CardContent>
         </Card>
@@ -155,11 +167,9 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
                       <p className="font-medium text-sm">{p.name}</p>
                       <p className="text-xs text-muted-foreground">{p.phone}</p>
                     </div>
-                    {isDoctor && (
-                      <Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'}>
-                        {statusAr(fin.status)}
-                      </Badge>
-                    )}
+                    <Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'}>
+                      {statusAr(fin.status)}
+                    </Badge>
                   </div>
                 );
               })}

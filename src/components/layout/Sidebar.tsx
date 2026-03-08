@@ -94,7 +94,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
               <Button
                 variant="ghost"
                 className={cn(
-                  'w-full gap-2 text-sidebar-foreground/70 hover:text-destructive hover:bg-sidebar-accent',
+                  'w-full gap-2 text-sidebar-accent-foreground hover:text-destructive hover:bg-sidebar-accent',
                   collapsed ? 'justify-center px-0' : 'justify-start'
                 )}
                 onClick={logout}

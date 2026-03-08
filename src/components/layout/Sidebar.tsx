@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Users, CalendarDays, Wallet, UserCog, LogOut, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarDays, Wallet, UserCog, LogOut, Stethoscope, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const navItems = [
   { label: 'لوحة التحكم', icon: LayoutDashboard, path: 'dashboard', doctorOnly: false },
@@ -18,46 +20,93 @@ interface SidebarProps {
 
 export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
   const { currentUser, isDoctor, logout } = useApp();
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen w-64 flex-col bg-sidebar-background text-sidebar-foreground">
-      <div className="flex items-center gap-3 p-6 border-b border-sidebar-border">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary">
-          <Sparkles className="h-5 w-5 text-sidebar-primary-foreground" />
+    <TooltipProvider delayDuration={0}>
+      <div className={cn(
+        'flex h-screen flex-col bg-sidebar-background text-sidebar-foreground transition-all duration-300',
+        collapsed ? 'w-[68px]' : 'w-64'
+      )}>
+        <div className={cn('flex items-center gap-3 p-4 border-b border-sidebar-border', collapsed && 'justify-center')}>
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary">
+            <Stethoscope className="h-5 w-5 text-sidebar-primary-foreground" />
+          </div>
+          {!collapsed && (
+            <div className="min-w-0">
+              <h1 className="font-bold text-sidebar-primary-foreground text-base truncate">عيادة الأسنان</h1>
+              <p className="text-[10px] text-sidebar-foreground/60 truncate">نظام إدارة العيادة</p>
+            </div>
+          )}
         </div>
-        <div>
-          <h1 className="font-bold text-sidebar-primary-foreground text-lg">عيادة الأسنان</h1>
-          <p className="text-xs text-sidebar-foreground/60">نظام إدارة العيادة</p>
-        </div>
-      </div>
 
-      <nav className="flex-1 p-4 space-y-1">
-        {navItems.filter(n => !n.doctorOnly || isDoctor).map(item => (
-          <button
-            key={item.path}
-            onClick={() => onNavigate(item.path)}
-            className={cn(
-              'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-              currentPage === item.path
-                ? 'bg-sidebar-accent text-sidebar-primary'
-                : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-            )}
+        <div className={cn('flex justify-end p-2', collapsed && 'justify-center')}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            onClick={() => setCollapsed(!collapsed)}
           >
-            <item.icon className="h-4 w-4" />
-            {item.label}
-          </button>
-        ))}
-      </nav>
-
-      <div className="border-t border-sidebar-border p-4">
-        <div className="mb-3 px-3">
-          <p className="text-sm font-medium text-sidebar-primary-foreground">{currentUser?.name}</p>
-          <p className="text-xs text-sidebar-foreground/60">{currentUser?.role === 'doctor' ? 'طبيب' : 'موظف استقبال'}</p>
+            {collapsed ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
+          </Button>
         </div>
-        <Button variant="ghost" className="w-full justify-start gap-2 text-sidebar-foreground/70 hover:text-destructive hover:bg-sidebar-accent" onClick={logout}>
-          <LogOut className="h-4 w-4" /> تسجيل الخروج
-        </Button>
+
+        <nav className="flex-1 px-2 space-y-1">
+          {navItems.filter(n => !n.doctorOnly || isDoctor).map(item => {
+            const btn = (
+              <button
+                key={item.path}
+                onClick={() => onNavigate(item.path)}
+                className={cn(
+                  'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                  collapsed && 'justify-center px-0',
+                  currentPage === item.path
+                    ? 'bg-sidebar-accent text-sidebar-primary'
+                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                )}
+              >
+                <item.icon className="h-4 w-4 shrink-0" />
+                {!collapsed && item.label}
+              </button>
+            );
+
+            if (collapsed) {
+              return (
+                <Tooltip key={item.path}>
+                  <TooltipTrigger asChild>{btn}</TooltipTrigger>
+                  <TooltipContent side="left">{item.label}</TooltipContent>
+                </Tooltip>
+              );
+            }
+            return btn;
+          })}
+        </nav>
+
+        <div className="border-t border-sidebar-border p-3">
+          {!collapsed && (
+            <div className="mb-2 px-3">
+              <p className="text-sm font-medium text-sidebar-primary-foreground truncate">{currentUser?.name}</p>
+              <p className="text-xs text-sidebar-foreground/60">{currentUser?.role === 'doctor' ? 'طبيب' : 'موظف استقبال'}</p>
+            </div>
+          )}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                className={cn(
+                  'w-full gap-2 text-sidebar-foreground/70 hover:text-destructive hover:bg-sidebar-accent',
+                  collapsed ? 'justify-center px-0' : 'justify-start'
+                )}
+                onClick={logout}
+              >
+                <LogOut className="h-4 w-4 shrink-0" />
+                {!collapsed && 'تسجيل الخروج'}
+              </Button>
+            </TooltipTrigger>
+            {collapsed && <TooltipContent side="left">تسجيل الخروج</TooltipContent>}
+          </Tooltip>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 }

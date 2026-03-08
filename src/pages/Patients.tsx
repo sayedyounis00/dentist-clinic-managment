@@ -20,7 +20,7 @@ export default function Patients({ onViewPatient }: Props) {
   const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ name: '', phone: '', email: '', dateOfBirth: '', bloodType: '', medicalHistory: '', allergies: '' });
+  const [form, setForm] = useState({ name: '', phone: '', dateOfBirth: '', medicalHistory: '', allergies: '', appointmentDate: '', appointmentTime: '09:00' });
 
   const filtered = patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.phone.includes(search));
 

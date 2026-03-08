@@ -91,8 +91,10 @@ export type Database = {
       }
       patients: {
         Row: {
+          age: number | null
           allergies: string
           blood_type: string
+          country: string
           created_at: string
           created_by: string | null
           date_of_birth: string
@@ -103,8 +105,10 @@ export type Database = {
           phone: string
         }
         Insert: {
+          age?: number | null
           allergies?: string
           blood_type?: string
+          country?: string
           created_at?: string
           created_by?: string | null
           date_of_birth?: string
@@ -115,8 +119,10 @@ export type Database = {
           phone?: string
         }
         Update: {
+          age?: number | null
           allergies?: string
           blood_type?: string
+          country?: string
           created_at?: string
           created_by?: string | null
           date_of_birth?: string

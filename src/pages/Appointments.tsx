@@ -234,11 +234,7 @@ export default function AppointmentsPage() {
                 <SelectContent>{patients.map(p => <SelectItem key={p.id} value={p.id}>{p.name} - {p.phone}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} /></div>
-              <div className="space-y-2"><Label>الوقت</Label><Input type="time" value={form.time} onChange={e => setForm({ ...form, time: e.target.value })} /></div>
-              <div className="space-y-2"><Label>المدة (دقيقة)</Label><Input type="number" value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })} /></div>
-            </div>
+            <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} /></div>
             <div className="space-y-2"><Label>النوع *</Label><Input value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} placeholder="مثال: كشف، تنظيف، متابعة" /></div>
             <div className="space-y-2"><Label>ملاحظات</Label><Textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} /></div>
           </div>

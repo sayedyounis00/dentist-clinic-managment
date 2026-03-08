@@ -14,7 +14,221 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          created_by: string | null
+          date: string
+          duration: number
+          id: string
+          notes: string
+          patient_id: string
+          status: string
+          time: string
+          type: string
+        }
+        Insert: {
+          created_by?: string | null
+          date?: string
+          duration?: number
+          id?: string
+          notes?: string
+          patient_id: string
+          status?: string
+          time?: string
+          type?: string
+        }
+        Update: {
+          created_by?: string | null
+          date?: string
+          duration?: number
+          id?: string
+          notes?: string
+          patient_id?: string
+          status?: string
+          time?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "clinic_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinic_users: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          password: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          password: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          password?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: []
+      }
+      patients: {
+        Row: {
+          allergies: string
+          blood_type: string
+          created_at: string
+          created_by: string | null
+          date_of_birth: string
+          email: string
+          id: string
+          medical_history: string
+          name: string
+          phone: string
+        }
+        Insert: {
+          allergies?: string
+          blood_type?: string
+          created_at?: string
+          created_by?: string | null
+          date_of_birth?: string
+          email?: string
+          id?: string
+          medical_history?: string
+          name: string
+          phone?: string
+        }
+        Update: {
+          allergies?: string
+          blood_type?: string
+          created_at?: string
+          created_by?: string | null
+          date_of_birth?: string
+          email?: string
+          id?: string
+          medical_history?: string
+          name?: string
+          phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patients_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "clinic_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          date: string
+          id: string
+          method: string
+          note: string
+          patient_id: string
+          recorded_by: string | null
+        }
+        Insert: {
+          amount?: number
+          date?: string
+          id?: string
+          method?: string
+          note?: string
+          patient_id: string
+          recorded_by?: string | null
+        }
+        Update: {
+          amount?: number
+          date?: string
+          id?: string
+          method?: string
+          note?: string
+          patient_id?: string
+          recorded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "clinic_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      treatments: {
+        Row: {
+          added_by: string | null
+          cost: number
+          date: string
+          description: string
+          id: string
+          notes: string
+          patient_id: string
+          tooth: string | null
+        }
+        Insert: {
+          added_by?: string | null
+          cost?: number
+          date?: string
+          description: string
+          id?: string
+          notes?: string
+          patient_id: string
+          tooth?: string | null
+        }
+        Update: {
+          added_by?: string | null
+          cost?: number
+          date?: string
+          description?: string
+          id?: string
+          notes?: string
+          patient_id?: string
+          tooth?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "treatments_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "clinic_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "treatments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +237,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      app_role: "doctor" | "receptionist"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +364,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["doctor", "receptionist"],
+    },
   },
 } as const

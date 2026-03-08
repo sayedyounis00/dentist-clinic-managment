@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { User, Patient, Treatment, Payment, Appointment } from '@/data/types';
-import { seedUsers, seedPatients, seedTreatments, seedPayments, seedAppointments } from '@/data/seed';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface AppContextType {
-  // Auth
   currentUser: User | null;
   users: User[];
   login: (userId: string, password: string) => boolean;
@@ -12,40 +12,59 @@ interface AppContextType {
   addReceptionist: (name: string, password: string) => void;
   updateUser: (id: string, name: string, password: string) => void;
   isDoctor: boolean;
-
-  // Patients
   patients: Patient[];
   addPatient: (p: Omit<Patient, 'id' | 'createdAt' | 'createdBy'>) => void;
   updatePatient: (p: Patient) => void;
-
-  // Treatments
   treatments: Treatment[];
   addTreatment: (t: Omit<Treatment, 'id' | 'addedBy'>) => void;
-
-  // Payments
   payments: Payment[];
   addPayment: (p: Omit<Payment, 'id' | 'recordedBy'>) => void;
-
-  // Appointments
   appointments: Appointment[];
   addAppointment: (a: Omit<Appointment, 'id' | 'createdBy'>) => void;
   updateAppointment: (a: Appointment) => void;
+  loading: boolean;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
 
-let idCounter = 100;
-const genId = (prefix: string) => `${prefix}${++idCounter}`;
+// Map DB rows (snake_case) to app types (camelCase)
+const mapUser = (r: any): User => ({ id: r.id, name: r.name, password: r.password, role: r.role, createdAt: r.created_at });
+const mapPatient = (r: any): Patient => ({ id: r.id, name: r.name, phone: r.phone, email: r.email, dateOfBirth: r.date_of_birth, bloodType: r.blood_type, medicalHistory: r.medical_history, allergies: r.allergies, createdAt: r.created_at, createdBy: r.created_by });
+const mapTreatment = (r: any): Treatment => ({ id: r.id, patientId: r.patient_id, description: r.description, tooth: r.tooth, cost: Number(r.cost), date: r.date, notes: r.notes, addedBy: r.added_by });
+const mapPayment = (r: any): Payment => ({ id: r.id, patientId: r.patient_id, amount: Number(r.amount), date: r.date, method: r.method, note: r.note, recordedBy: r.recorded_by });
+const mapAppointment = (r: any): Appointment => ({ id: r.id, patientId: r.patient_id, date: r.date, time: r.time, duration: r.duration, type: r.type, status: r.status, notes: r.notes, createdBy: r.created_by });
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [users, setUsers] = useState<User[]>(seedUsers);
+  const [users, setUsers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [patients, setPatients] = useState<Patient[]>(seedPatients);
-  const [treatments, setTreatments] = useState<Treatment[]>(seedTreatments);
-  const [payments, setPayments] = useState<Payment[]>(seedPayments);
-  const [appointments, setAppointments] = useState<Appointment[]>(seedAppointments);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [treatments, setTreatments] = useState<Treatment[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const isDoctor = currentUser?.role === 'doctor';
+
+  // Load all data from Supabase on mount
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      const [usersRes, patientsRes, treatmentsRes, paymentsRes, appointmentsRes] = await Promise.all([
+        supabase.from('clinic_users').select('*'),
+        supabase.from('patients').select('*'),
+        supabase.from('treatments').select('*'),
+        supabase.from('payments').select('*'),
+        supabase.from('appointments').select('*'),
+      ]);
+      if (usersRes.data) setUsers(usersRes.data.map(mapUser));
+      if (patientsRes.data) setPatients(patientsRes.data.map(mapPatient));
+      if (treatmentsRes.data) setTreatments(treatmentsRes.data.map(mapTreatment));
+      if (paymentsRes.data) setPayments(paymentsRes.data.map(mapPayment));
+      if (appointmentsRes.data) setAppointments(appointmentsRes.data.map(mapAppointment));
+      setLoading(false);
+    };
+    load();
+  }, []);
 
   const login = useCallback((userId: string, password: string) => {
     const user = users.find(u => u.id === userId && u.password === password);
@@ -55,42 +74,72 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => setCurrentUser(null), []);
 
-  const registerDoctor = useCallback((name: string, password: string) => {
-    const doc: User = { id: genId('u'), name, password, role: 'doctor', createdAt: new Date().toISOString().split('T')[0] };
-    setUsers([doc]);
-    setCurrentUser(doc);
+  const registerDoctor = useCallback(async (name: string, password: string) => {
+    const { data, error } = await supabase.from('clinic_users').insert({ name, password, role: 'doctor' }).select().single();
+    if (data) {
+      const user = mapUser(data);
+      setUsers([user]);
+      setCurrentUser(user);
+    }
   }, []);
 
-  const addReceptionist = useCallback((name: string, password: string) => {
-    setUsers(prev => [...prev, { id: genId('u'), name, password, role: 'receptionist', createdAt: new Date().toISOString().split('T')[0] }]);
+  const addReceptionist = useCallback(async (name: string, password: string) => {
+    const { data } = await supabase.from('clinic_users').insert({ name, password, role: 'receptionist' }).select().single();
+    if (data) setUsers(prev => [...prev, mapUser(data)]);
   }, []);
 
-  const updateUser = useCallback((id: string, name: string, password: string) => {
-    setUsers(prev => prev.map(u => u.id === id ? { ...u, name, password } : u));
+  const updateUser = useCallback(async (id: string, name: string, password: string) => {
+    const { data } = await supabase.from('clinic_users').update({ name, password }).eq('id', id).select().single();
+    if (data) setUsers(prev => prev.map(u => u.id === id ? mapUser(data) : u));
   }, []);
 
-  const addPatient = useCallback((p: Omit<Patient, 'id' | 'createdAt' | 'createdBy'>) => {
-    setPatients(prev => [...prev, { ...p, id: genId('p'), createdAt: new Date().toISOString().split('T')[0], createdBy: currentUser!.id }]);
+  const addPatient = useCallback(async (p: Omit<Patient, 'id' | 'createdAt' | 'createdBy'>) => {
+    const { data } = await supabase.from('patients').insert({
+      name: p.name, phone: p.phone, email: p.email, date_of_birth: p.dateOfBirth,
+      blood_type: p.bloodType, medical_history: p.medicalHistory, allergies: p.allergies,
+      created_by: currentUser?.id,
+    }).select().single();
+    if (data) setPatients(prev => [...prev, mapPatient(data)]);
   }, [currentUser]);
 
-  const updatePatient = useCallback((p: Patient) => {
-    setPatients(prev => prev.map(pt => pt.id === p.id ? p : pt));
+  const updatePatient = useCallback(async (p: Patient) => {
+    const { data } = await supabase.from('patients').update({
+      name: p.name, phone: p.phone, email: p.email, date_of_birth: p.dateOfBirth,
+      blood_type: p.bloodType, medical_history: p.medicalHistory, allergies: p.allergies,
+    }).eq('id', p.id).select().single();
+    if (data) setPatients(prev => prev.map(pt => pt.id === p.id ? mapPatient(data) : pt));
   }, []);
 
-  const addTreatment = useCallback((t: Omit<Treatment, 'id' | 'addedBy'>) => {
-    setTreatments(prev => [...prev, { ...t, id: genId('t'), addedBy: currentUser!.id }]);
+  const addTreatment = useCallback(async (t: Omit<Treatment, 'id' | 'addedBy'>) => {
+    const { data } = await supabase.from('treatments').insert({
+      patient_id: t.patientId, description: t.description, tooth: t.tooth,
+      cost: t.cost, date: t.date, notes: t.notes, added_by: currentUser?.id,
+    }).select().single();
+    if (data) setTreatments(prev => [...prev, mapTreatment(data)]);
   }, [currentUser]);
 
-  const addPayment = useCallback((p: Omit<Payment, 'id' | 'recordedBy'>) => {
-    setPayments(prev => [...prev, { ...p, id: genId('pay'), recordedBy: currentUser!.id }]);
+  const addPayment = useCallback(async (p: Omit<Payment, 'id' | 'recordedBy'>) => {
+    const { data } = await supabase.from('payments').insert({
+      patient_id: p.patientId, amount: p.amount, date: p.date,
+      method: p.method, note: p.note, recorded_by: currentUser?.id,
+    }).select().single();
+    if (data) setPayments(prev => [...prev, mapPayment(data)]);
   }, [currentUser]);
 
-  const addAppointment = useCallback((a: Omit<Appointment, 'id' | 'createdBy'>) => {
-    setAppointments(prev => [...prev, { ...a, id: genId('a'), createdBy: currentUser!.id }]);
+  const addAppointment = useCallback(async (a: Omit<Appointment, 'id' | 'createdBy'>) => {
+    const { data } = await supabase.from('appointments').insert({
+      patient_id: a.patientId, date: a.date, time: a.time, duration: a.duration,
+      type: a.type, status: a.status, notes: a.notes, created_by: currentUser?.id,
+    }).select().single();
+    if (data) setAppointments(prev => [...prev, mapAppointment(data)]);
   }, [currentUser]);
 
-  const updateAppointment = useCallback((a: Appointment) => {
-    setAppointments(prev => prev.map(ap => ap.id === a.id ? a : ap));
+  const updateAppointment = useCallback(async (a: Appointment) => {
+    const { data } = await supabase.from('appointments').update({
+      status: a.status, notes: a.notes, date: a.date, time: a.time,
+      duration: a.duration, type: a.type,
+    }).eq('id', a.id).select().single();
+    if (data) setAppointments(prev => prev.map(ap => ap.id === a.id ? mapAppointment(data) : ap));
   }, []);
 
   return (
@@ -100,6 +149,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       treatments, addTreatment,
       payments, addPayment,
       appointments, addAppointment, updateAppointment,
+      loading,
     }}>
       {children}
     </AppContext.Provider>

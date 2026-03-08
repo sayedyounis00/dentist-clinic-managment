@@ -6,16 +6,24 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Stethoscope } from 'lucide-react';
+import { Stethoscope, Loader2 } from 'lucide-react';
 
 export default function Login() {
-  const { users, login, registerDoctor } = useApp();
+  const { users, login, registerDoctor, loading } = useApp();
   const { toast } = useToast();
   const hasDoctor = users.some(u => u.role === 'doctor');
   const [selectedUserId, setSelectedUserId] = useState('');
   const [password, setPassword] = useState('');
   const [regName, setRegName] = useState('');
   const [regPassword, setRegPassword] = useState('');
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!hasDoctor) {
     return (

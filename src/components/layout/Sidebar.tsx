@@ -86,7 +86,7 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
           {!collapsed && (
             <div className="mb-2 px-3">
               <p className="text-sm font-medium text-sidebar-primary-foreground truncate">{currentUser?.name}</p>
-              <p className="text-xs text-sidebar-foreground/60">{currentUser?.role === 'doctor' ? 'طبيب' : 'موظف استقبال'}</p>
+              <p className="text-xs text-sidebar-foreground/80">{currentUser?.role === 'doctor' ? 'طبيب' : 'موظف استقبال'}</p>
             </div>
           )}
           <Tooltip>

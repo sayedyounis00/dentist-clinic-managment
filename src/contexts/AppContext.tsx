@@ -93,13 +93,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (data) setUsers(prev => prev.map(u => u.id === id ? mapUser(data) : u));
   }, []);
 
-  const addPatient = useCallback(async (p: Omit<Patient, 'id' | 'createdAt' | 'createdBy'>) => {
+  const addPatient = useCallback(async (p: Omit<Patient, 'id' | 'createdAt' | 'createdBy'>): Promise<string | null> => {
     const { data } = await supabase.from('patients').insert({
       name: p.name, phone: p.phone, email: p.email, date_of_birth: p.dateOfBirth,
       blood_type: p.bloodType, medical_history: p.medicalHistory, allergies: p.allergies,
       created_by: currentUser?.id,
     }).select().single();
-    if (data) setPatients(prev => [...prev, mapPatient(data)]);
+    if (data) {
+      setPatients(prev => [...prev, mapPatient(data)]);
+      return data.id;
+    }
+    return null;
   }, [currentUser]);
 
   const updatePatient = useCallback(async (p: Patient) => {

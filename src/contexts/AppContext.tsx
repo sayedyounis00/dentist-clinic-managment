@@ -180,7 +180,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       patients, addPatient, updatePatient, deletePatient,
       treatments, addTreatment,
       payments, addPayment,
-      appointments, addAppointment, updateAppointment,
+      appointments, addAppointment, updateAppointment, deleteAppointment,
       loading,
     }}>
       {children}

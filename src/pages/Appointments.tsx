@@ -194,11 +194,6 @@ export default function AppointmentsPage() {
           return (
             <Card key={a.id} className="overflow-hidden">
               <CardContent className="flex items-center gap-4 p-4">
-                <div className="flex flex-col items-center min-w-[60px]">
-                  <p className="text-lg font-bold">{formatTime(a.time)}</p>
-                  <p className="text-xs text-muted-foreground">{a.duration} د</p>
-                </div>
-                <div className="w-px h-10 bg-border" />
                 {statusIcon(a.status)}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

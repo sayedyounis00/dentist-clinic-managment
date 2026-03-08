@@ -32,7 +32,18 @@ export default function PatientDetail({ patientId, onBack }: Props) {
   const [tForm, setTForm] = useState({ description: '', tooth: '', cost: '', date: new Date().toISOString().split('T')[0], notes: '' });
   const [pForm, setPForm] = useState({ amount: '', date: new Date().toISOString().split('T')[0], method: 'cash' as 'cash' | 'card' | 'insurance', note: '' });
 
-  const age = patient.dateOfBirth ? Math.floor((Date.now() - new Date(patient.dateOfBirth).getTime()) / 31557600000) : 'غير محدد';
+  // Parse age and country from medicalHistory
+  const parseMedicalHistory = (mh: string) => {
+    const lines = mh.split('\n');
+    let age = 'غير محدد';
+    let country = 'غير محدد';
+    for (const line of lines) {
+      if (line.startsWith('السن:')) age = line.replace('السن:', '').trim();
+      if (line.startsWith('البلد:')) country = line.replace('البلد:', '').trim();
+    }
+    return { age, country };
+  };
+  const { age, country } = parseMedicalHistory(patient.medicalHistory || '');
 
   const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
   const apptStatusAr = (s: string) => s === 'scheduled' ? 'مجدول' : s === 'completed' ? 'مكتمل' : s === 'cancelled' ? 'ملغي' : 'لم يحضر';

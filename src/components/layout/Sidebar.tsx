@@ -16,6 +16,8 @@ const navItems = [
 interface SidebarProps {
   currentPage: string;
   onNavigate: (page: string) => void;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
 export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {

@@ -20,9 +20,8 @@ interface SidebarProps {
   onToggleCollapse: () => void;
 }
 
-export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
+export default function Sidebar({ currentPage, onNavigate, collapsed, onToggleCollapse }: SidebarProps) {
   const { currentUser, isDoctor, logout } = useApp();
-  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <TooltipProvider delayDuration={0}>

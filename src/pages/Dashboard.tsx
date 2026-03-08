@@ -77,7 +77,7 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">إيرادات اليوم</p>
-                  <p className="text-2xl font-bold">{todayRevenue.toLocaleString()} ر.س</p>
+                  <p className="text-2xl font-bold">{todayRevenue.toLocaleString()} ج.م</p>
                 </div>
               </CardContent>
             </Card>

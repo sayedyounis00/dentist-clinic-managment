@@ -22,7 +22,7 @@ export default function Patients({ onViewPatient }: Props) {
   const [showAdd, setShowAdd] = useState(false);
   const today = new Date().toISOString().split('T')[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-  const [form, setForm] = useState({ name: '', phone: '', medicalHistory: '', appointmentDate: '' });
+  const [form, setForm] = useState({ name: '', phone: '', age: '', country: '', appointmentDate: '' });
 
   const filtered = patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.phone.includes(search));
 
@@ -35,11 +35,11 @@ export default function Patients({ onViewPatient }: Props) {
 
   const handleAdd = async () => {
     if (!form.name.trim() || !form.phone.trim()) { toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' }); return; }
-    const patientId = await addPatient({ ...form, email: '', bloodType: '', dateOfBirth: '', allergies: '' });
+    const patientId = await addPatient({ ...form, email: '', bloodType: '', dateOfBirth: '', allergies: '', medicalHistory: form.country ? `البلد: ${form.country}` : '' });
     if (patientId && form.appointmentDate) {
       addAppointment({ patientId, date: form.appointmentDate, time: '09:00', duration: 30, type: 'كشف', status: 'scheduled', notes: '' });
     }
-    setForm({ name: '', phone: '', medicalHistory: '', appointmentDate: '' });
+    setForm({ name: '', phone: '', age: '', country: '', appointmentDate: '' });
     setShowAdd(false);
     toast({ title: 'تم بنجاح', description: form.appointmentDate ? 'تمت إضافة المريض وحجز الموعد' : 'تمت إضافة المريض بنجاح' });
   };
@@ -109,8 +109,10 @@ export default function Patients({ onViewPatient }: Props) {
               <div className="space-y-2"><Label>الاسم الكامل *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
               <div className="space-y-2"><Label>الهاتف *</Label><Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></div>
             </div>
-            <div className="space-y-2"><Label>التاريخ المرضي</Label><Textarea value={form.medicalHistory} onChange={e => setForm({ ...form, medicalHistory: e.target.value })} /></div>
-            <div className="space-y-2"><Label>التاريخ المرضي</Label><Textarea value={form.medicalHistory} onChange={e => setForm({ ...form, medicalHistory: e.target.value })} /></div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2"><Label>السن</Label><Input type="number" value={form.age} onChange={e => setForm({ ...form, age: e.target.value })} placeholder="مثال: 30" /></div>
+              <div className="space-y-2"><Label>البلد</Label><Input value={form.country} onChange={e => setForm({ ...form, country: e.target.value })} placeholder="مثال: مصر" /></div>
+            </div>
             <div className="border-t pt-4 mt-2">
               <p className="text-sm font-medium mb-3">موعد الكشف (اختياري)</p>
               <div className="flex gap-2 flex-wrap">

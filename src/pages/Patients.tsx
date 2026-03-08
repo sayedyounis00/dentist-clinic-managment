@@ -33,7 +33,7 @@ export default function Patients({ onViewPatient }: Props) {
 
   const handleAdd = async () => {
     if (!form.name.trim() || !form.phone.trim()) { toast({ title: 'خطأ', description: 'الاسم ورقم الهاتف مطلوبان', variant: 'destructive' }); return; }
-    addPatient(form);
+    addPatient({ ...form, email: '', bloodType: '' });
     // If appointment date is set, create an appointment
     if (form.appointmentDate) {
       // We need to wait briefly for the patient to be added, then find them

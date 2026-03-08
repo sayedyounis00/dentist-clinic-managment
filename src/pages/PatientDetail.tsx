@@ -12,13 +12,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Plus, Printer, Heart, MapPin, Pencil } from 'lucide-react';
+import { ArrowRight, Plus, Printer, Heart, MapPin, Pencil, Trash2 } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import Invoice from '@/components/Invoice';
 
 interface Props { patientId: string; onBack: () => void; }
 
 export default function PatientDetail({ patientId, onBack }: Props) {
-  const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment, updatePatient } = useApp();
+  const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment, updatePatient, deletePatient } = useApp();
   const { toast } = useToast();
   const patient = patients.find(p => p.id === patientId)!;
   const fin = getPatientFinancials(patientId, treatments, payments);
@@ -80,6 +81,16 @@ export default function PatientDetail({ patientId, onBack }: Props) {
     toast({ title: 'تم بنجاح', description: 'تم تحديث بيانات المريض' });
   };
 
+  const handleDeletePatient = async () => {
+    const success = await deletePatient(patientId);
+    if (success) {
+      toast({ title: 'تم بنجاح', description: 'تم حذف المريض وجميع بياناته' });
+      onBack();
+    } else {
+      toast({ title: 'خطأ', description: 'حدث خطأ أثناء حذف المريض', variant: 'destructive' });
+    }
+  };
+
   if (showInvoice) {
     return <Invoice patient={patient} treatments={ptTreatments} payments={ptPayments} onBack={() => setShowInvoice(false)} />;
   }
@@ -93,6 +104,21 @@ export default function PatientDetail({ patientId, onBack }: Props) {
           <p className="text-muted-foreground">{patient.phone}</p>
         </div>
         <Button variant="outline" size="sm" onClick={openEditDialog}><Pencil className="ml-2 h-4 w-4" /> تعديل</Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm"><Trash2 className="ml-2 h-4 w-4" /> حذف</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>هل أنت متأكد من حذف هذا المريض؟</AlertDialogTitle>
+              <AlertDialogDescription>سيتم حذف المريض "{patient.name}" وجميع بياناته (العلاجات، المدفوعات، المواعيد) نهائياً. لا يمكن التراجع عن هذا الإجراء.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>إلغاء</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeletePatient} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">حذف نهائياً</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         <Button variant="outline" onClick={() => setShowInvoice(true)}><Printer className="ml-2 h-4 w-4" /> فاتورة</Button>
       </div>
 

@@ -15,6 +15,7 @@ interface AppContextType {
   patients: Patient[];
   addPatient: (p: Omit<Patient, 'id' | 'createdAt' | 'createdBy'>) => Promise<string | null>;
   updatePatient: (p: Patient) => void;
+  deletePatient: (id: string) => Promise<boolean>;
   treatments: Treatment[];
   addTreatment: (t: Omit<Treatment, 'id' | 'addedBy'>) => void;
   payments: Payment[];
@@ -116,6 +117,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (data) setPatients(prev => prev.map(pt => pt.id === p.id ? mapPatient(data) : pt));
   }, []);
 
+  const deletePatient = useCallback(async (id: string): Promise<boolean> => {
+    await supabase.from('treatments').delete().eq('patient_id', id);
+    await supabase.from('payments').delete().eq('patient_id', id);
+    await supabase.from('appointments').delete().eq('patient_id', id);
+    const { error } = await supabase.from('patients').delete().eq('id', id);
+    if (!error) {
+      setPatients(prev => prev.filter(p => p.id !== id));
+      setTreatments(prev => prev.filter(t => t.patientId !== id));
+      setPayments(prev => prev.filter(p => p.patientId !== id));
+      setAppointments(prev => prev.filter(a => a.patientId !== id));
+      return true;
+    }
+    return false;
+  }, []);
+
   const addTreatment = useCallback(async (t: Omit<Treatment, 'id' | 'addedBy'>) => {
     const { data } = await supabase.from('treatments').insert({
       patient_id: t.patientId, description: t.description, tooth: t.tooth,
@@ -151,7 +167,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={{
       currentUser, users, login, logout, registerDoctor, addReceptionist, updateUser, isDoctor,
-      patients, addPatient, updatePatient,
+      patients, addPatient, updatePatient, deletePatient,
       treatments, addTreatment,
       payments, addPayment,
       appointments, addAppointment, updateAppointment,

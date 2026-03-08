@@ -3,7 +3,7 @@ import { getPatientFinancials } from '@/data/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DollarSign, TrendingUp, CreditCard, Banknote, Shield } from 'lucide-react';
+import { Wallet, TrendingUp, CreditCard, Banknote, ShieldCheck } from 'lucide-react';
 
 export default function Finance() {
   const { patients, treatments, payments } = useApp();
@@ -25,6 +25,8 @@ export default function Finance() {
   const weekRev = payments.filter(p => new Date(p.date) >= startOfWeek).reduce((s, p) => s + p.amount, 0);
   const monthRev = payments.filter(p => new Date(p.date) >= startOfMonth).reduce((s, p) => s + p.amount, 0);
 
+  const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
+
   const patientBalances = patients.map(p => {
     const fin = getPatientFinancials(p.id, treatments, payments);
     return { ...p, ...fin };
@@ -32,27 +34,27 @@ export default function Finance() {
 
   return (
     <div className="space-y-6">
-      <div><h1 className="text-2xl font-bold">Finance</h1><p className="text-muted-foreground">Clinic revenue and financial overview</p></div>
+      <div><h1 className="text-2xl font-bold">المالية</h1><p className="text-muted-foreground">الإيرادات والنظرة المالية العامة للعيادة</p></div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><DollarSign className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">Total Collected</p><p className="text-2xl font-bold">${totalCollected.toLocaleString()}</p></div></CardContent></Card>
-        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><TrendingUp className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">Total Charged</p><p className="text-2xl font-bold">${totalCharged.toLocaleString()}</p></div></CardContent></Card>
-        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10"><DollarSign className="h-6 w-6 text-destructive" /></div><div><p className="text-sm text-muted-foreground">Total Outstanding</p><p className="text-2xl font-bold">${totalOwed.toLocaleString()}</p></div></CardContent></Card>
+        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><Wallet className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">إجمالي المحصّل</p><p className="text-2xl font-bold">{totalCollected.toLocaleString()} ر.س</p></div></CardContent></Card>
+        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10"><TrendingUp className="h-6 w-6 text-primary" /></div><div><p className="text-sm text-muted-foreground">إجمالي الرسوم</p><p className="text-2xl font-bold">{totalCharged.toLocaleString()} ر.س</p></div></CardContent></Card>
+        <Card><CardContent className="flex items-center gap-4 p-6"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10"><Wallet className="h-6 w-6 text-destructive" /></div><div><p className="text-sm text-muted-foreground">إجمالي المستحق</p><p className="text-2xl font-bold">{totalOwed.toLocaleString()} ر.س</p></div></CardContent></Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">Today</p><p className="text-xl font-bold">${todayRev.toLocaleString()}</p></CardContent></Card>
-        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">This Week</p><p className="text-xl font-bold">${weekRev.toLocaleString()}</p></CardContent></Card>
-        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">This Month</p><p className="text-xl font-bold">${monthRev.toLocaleString()}</p></CardContent></Card>
+        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">اليوم</p><p className="text-xl font-bold">{todayRev.toLocaleString()} ر.س</p></CardContent></Card>
+        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">هذا الأسبوع</p><p className="text-xl font-bold">{weekRev.toLocaleString()} ر.س</p></CardContent></Card>
+        <Card><CardContent className="p-6 text-center"><p className="text-sm text-muted-foreground">هذا الشهر</p><p className="text-xl font-bold">{monthRev.toLocaleString()} ر.س</p></CardContent></Card>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle className="text-lg">Payment Method Breakdown</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-lg">تفصيل طرق الدفع</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-primary" /><span>Cash</span></div><span className="font-bold">${cashTotal.toLocaleString()}</span></div>
-            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /><span>Card</span></div><span className="font-bold">${cardTotal.toLocaleString()}</span></div>
-            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Shield className="h-4 w-4 text-primary" /><span>Insurance</span></div><span className="font-bold">${insuranceTotal.toLocaleString()}</span></div>
+            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-primary" /><span>نقداً</span></div><span className="font-bold">{cashTotal.toLocaleString()} ر.س</span></div>
+            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /><span>بطاقة</span></div><span className="font-bold">{cardTotal.toLocaleString()} ر.س</span></div>
+            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /><span>تأمين</span></div><span className="font-bold">{insuranceTotal.toLocaleString()} ر.س</span></div>
             {totalCollected > 0 && (
               <div className="mt-4 flex h-4 overflow-hidden rounded-full bg-muted">
                 <div className="bg-primary" style={{ width: `${(cashTotal / totalCollected) * 100}%` }} />
@@ -64,14 +66,14 @@ export default function Finance() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-lg">Top Outstanding Balances</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-lg">أعلى الأرصدة المستحقة</CardTitle></CardHeader>
           <CardContent>
-            {patientBalances.length === 0 ? <p className="text-muted-foreground text-sm">No outstanding balances</p> : (
+            {patientBalances.length === 0 ? <p className="text-muted-foreground text-sm">لا توجد أرصدة مستحقة</p> : (
               <Table>
-                <TableHeader><TableRow><TableHead>Patient</TableHead><TableHead>Owed</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
+                <TableHeader><TableRow><TableHead>المريض</TableHead><TableHead>المستحق</TableHead><TableHead>الحالة</TableHead></TableRow></TableHeader>
                 <TableBody>
                   {patientBalances.slice(0, 10).map(p => (
-                    <TableRow key={p.id}><TableCell className="font-medium">{p.name}</TableCell><TableCell>${p.balance.toLocaleString()}</TableCell><TableCell><Badge variant={p.status === 'Partial' ? 'secondary' : 'destructive'}>{p.status}</Badge></TableCell></TableRow>
+                    <TableRow key={p.id}><TableCell className="font-medium">{p.name}</TableCell><TableCell>{p.balance.toLocaleString()} ر.س</TableCell><TableCell><Badge variant={p.status === 'Partial' ? 'secondary' : 'destructive'}>{statusAr(p.status)}</Badge></TableCell></TableRow>
                   ))}
                 </TableBody>
               </Table>

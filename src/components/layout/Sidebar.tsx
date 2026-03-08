@@ -1,14 +1,14 @@
 import { useApp } from '@/contexts/AppContext';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Users, Calendar, DollarSign, UserCog, LogOut, Stethoscope } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarDays, Wallet, UserCog, LogOut, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: 'dashboard', doctorOnly: false },
-  { label: 'Patients', icon: Users, path: 'patients', doctorOnly: false },
-  { label: 'Appointments', icon: Calendar, path: 'appointments', doctorOnly: false },
-  { label: 'Finance', icon: DollarSign, path: 'finance', doctorOnly: true },
-  { label: 'Staff', icon: UserCog, path: 'staff', doctorOnly: true },
+  { label: 'لوحة التحكم', icon: LayoutDashboard, path: 'dashboard', doctorOnly: false },
+  { label: 'المرضى', icon: Users, path: 'patients', doctorOnly: false },
+  { label: 'المواعيد', icon: CalendarDays, path: 'appointments', doctorOnly: false },
+  { label: 'المالية', icon: Wallet, path: 'finance', doctorOnly: true },
+  { label: 'الموظفين', icon: UserCog, path: 'staff', doctorOnly: true },
 ];
 
 interface SidebarProps {
@@ -23,11 +23,11 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
     <div className="flex h-screen w-64 flex-col bg-sidebar-background text-sidebar-foreground">
       <div className="flex items-center gap-3 p-6 border-b border-sidebar-border">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary">
-          <Stethoscope className="h-5 w-5 text-sidebar-primary-foreground" />
+          <Sparkles className="h-5 w-5 text-sidebar-primary-foreground" />
         </div>
         <div>
-          <h1 className="font-bold text-sidebar-primary-foreground text-lg">DentalCare</h1>
-          <p className="text-xs text-sidebar-foreground/60">Clinic Management</p>
+          <h1 className="font-bold text-sidebar-primary-foreground text-lg">عيادة الأسنان</h1>
+          <p className="text-xs text-sidebar-foreground/60">نظام إدارة العيادة</p>
         </div>
       </div>
 
@@ -52,10 +52,10 @@ export default function Sidebar({ currentPage, onNavigate }: SidebarProps) {
       <div className="border-t border-sidebar-border p-4">
         <div className="mb-3 px-3">
           <p className="text-sm font-medium text-sidebar-primary-foreground">{currentUser?.name}</p>
-          <p className="text-xs capitalize text-sidebar-foreground/60">{currentUser?.role}</p>
+          <p className="text-xs text-sidebar-foreground/60">{currentUser?.role === 'doctor' ? 'طبيب' : 'موظف استقبال'}</p>
         </div>
         <Button variant="ghost" className="w-full justify-start gap-2 text-sidebar-foreground/70 hover:text-destructive hover:bg-sidebar-accent" onClick={logout}>
-          <LogOut className="h-4 w-4" /> Sign Out
+          <LogOut className="h-4 w-4" /> تسجيل الخروج
         </Button>
       </div>
     </div>

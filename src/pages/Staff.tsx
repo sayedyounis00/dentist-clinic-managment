@@ -20,18 +20,18 @@ export default function Staff() {
   const [form, setForm] = useState({ name: '', password: '' });
 
   const handleAdd = () => {
-    if (doctorPw !== currentUser?.password) { toast({ title: 'Error', description: 'Doctor password incorrect', variant: 'destructive' }); return; }
-    if (!form.name.trim() || !form.password.trim()) { toast({ title: 'Error', description: 'All fields required', variant: 'destructive' }); return; }
+    if (doctorPw !== currentUser?.password) { toast({ title: 'خطأ', description: 'كلمة مرور الطبيب غير صحيحة', variant: 'destructive' }); return; }
+    if (!form.name.trim() || !form.password.trim()) { toast({ title: 'خطأ', description: 'جميع الحقول مطلوبة', variant: 'destructive' }); return; }
     addReceptionist(form.name.trim(), form.password.trim());
     setShowAdd(false); setForm({ name: '', password: '' }); setDoctorPw('');
-    toast({ title: 'Success', description: 'Receptionist added' });
+    toast({ title: 'تم بنجاح', description: 'تمت إضافة موظف الاستقبال' });
   };
 
   const handleEdit = () => {
-    if (!showEdit || !form.name.trim() || !form.password.trim()) { toast({ title: 'Error', description: 'All fields required', variant: 'destructive' }); return; }
+    if (!showEdit || !form.name.trim() || !form.password.trim()) { toast({ title: 'خطأ', description: 'جميع الحقول مطلوبة', variant: 'destructive' }); return; }
     updateUser(showEdit, form.name.trim(), form.password.trim());
     setShowEdit(null); setForm({ name: '', password: '' });
-    toast({ title: 'Success', description: 'Receptionist updated' });
+    toast({ title: 'تم بنجاح', description: 'تم تحديث بيانات موظف الاستقبال' });
   };
 
   const openEdit = (id: string) => {
@@ -42,51 +42,49 @@ export default function Staff() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold">Staff Management</h1><p className="text-muted-foreground">Manage receptionist accounts</p></div>
-        <Button onClick={() => { setForm({ name: '', password: '' }); setDoctorPw(''); setShowAdd(true); }}><Plus className="mr-2 h-4 w-4" /> Add Receptionist</Button>
+        <div><h1 className="text-2xl font-bold">إدارة الموظفين</h1><p className="text-muted-foreground">إدارة حسابات موظفي الاستقبال</p></div>
+        <Button onClick={() => { setForm({ name: '', password: '' }); setDoctorPw(''); setShowAdd(true); }}><Plus className="ml-2 h-4 w-4" /> إضافة موظف استقبال</Button>
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><UserCog className="h-5 w-5 text-primary" /> Receptionists</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><UserCog className="h-5 w-5 text-primary" /> موظفو الاستقبال</CardTitle></CardHeader>
         <CardContent>
           <Table>
-            <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Created</TableHead><TableHead className="text-right">Actions</TableHead></TableRow></TableHeader>
+            <TableHeader><TableRow><TableHead>الاسم</TableHead><TableHead>تاريخ الإنشاء</TableHead><TableHead className="text-left">الإجراءات</TableHead></TableRow></TableHeader>
             <TableBody>
               {receptionists.map(r => (
                 <TableRow key={r.id}>
                   <TableCell className="font-medium">{r.name}</TableCell>
                   <TableCell>{r.createdAt}</TableCell>
-                  <TableCell className="text-right"><Button size="sm" variant="outline" onClick={() => openEdit(r.id)}><Pencil className="mr-1 h-3 w-3" /> Edit</Button></TableCell>
+                  <TableCell className="text-left"><Button size="sm" variant="outline" onClick={() => openEdit(r.id)}><Pencil className="ml-1 h-3 w-3" /> تعديل</Button></TableCell>
                 </TableRow>
               ))}
-              {receptionists.length === 0 && <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">No receptionists added</TableCell></TableRow>}
+              {receptionists.length === 0 && <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">لا يوجد موظفو استقبال</TableCell></TableRow>}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
 
-      {/* Add Dialog */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Add Receptionist</DialogTitle><DialogDescription>Enter your password to confirm, then fill in the new receptionist's details.</DialogDescription></DialogHeader>
+          <DialogHeader><DialogTitle>إضافة موظف استقبال</DialogTitle><DialogDescription>أدخل كلمة المرور الخاصة بك للتأكيد، ثم أدخل بيانات موظف الاستقبال الجديد.</DialogDescription></DialogHeader>
           <div className="grid gap-4 py-2">
-            <div className="space-y-2"><Label>Your Doctor Password *</Label><Input type="password" value={doctorPw} onChange={e => setDoctorPw(e.target.value)} placeholder="Confirm your password" /></div>
-            <div className="space-y-2"><Label>Receptionist Name *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
-            <div className="space-y-2"><Label>Receptionist Password *</Label><Input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} /></div>
+            <div className="space-y-2"><Label>كلمة مرور الطبيب *</Label><Input type="password" value={doctorPw} onChange={e => setDoctorPw(e.target.value)} placeholder="أكد كلمة مرورك" /></div>
+            <div className="space-y-2"><Label>اسم موظف الاستقبال *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
+            <div className="space-y-2"><Label>كلمة مرور موظف الاستقبال *</Label><Input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} /></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button><Button onClick={handleAdd}>Add Receptionist</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setShowAdd(false)}>إلغاء</Button><Button onClick={handleAdd}>إضافة موظف الاستقبال</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Edit Dialog */}
       <Dialog open={!!showEdit} onOpenChange={() => setShowEdit(null)}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Edit Receptionist</DialogTitle><DialogDescription>Update the receptionist's name or password.</DialogDescription></DialogHeader>
+          <DialogHeader><DialogTitle>تعديل موظف الاستقبال</DialogTitle><DialogDescription>تحديث اسم أو كلمة مرور موظف الاستقبال.</DialogDescription></DialogHeader>
           <div className="grid gap-4 py-2">
-            <div className="space-y-2"><Label>Name *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
-            <div className="space-y-2"><Label>Password *</Label><Input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} /></div>
+            <div className="space-y-2"><Label>الاسم *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
+            <div className="space-y-2"><Label>كلمة المرور *</Label><Input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} /></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setShowEdit(null)}>Cancel</Button><Button onClick={handleEdit}>Save Changes</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setShowEdit(null)}>إلغاء</Button><Button onClick={handleEdit}>حفظ التغييرات</Button></DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

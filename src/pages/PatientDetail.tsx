@@ -111,7 +111,7 @@ export default function PatientDetail({ patientId, onBack }: Props) {
                 <TableHeader><TableRow><TableHead>التاريخ</TableHead><TableHead>الوصف</TableHead><TableHead>السن</TableHead><TableHead>التكلفة</TableHead><TableHead>ملاحظات</TableHead></TableRow></TableHeader>
                 <TableBody>
                   {ptTreatments.map(t => (
-                    <TableRow key={t.id}><TableCell>{t.date}</TableCell><TableCell className="font-medium">{t.description}</TableCell><TableCell>{t.tooth || '—'}</TableCell><TableCell>{t.cost.toLocaleString()} ر.س</TableCell><TableCell className="text-muted-foreground">{t.notes}</TableCell></TableRow>
+                    <TableRow key={t.id}><TableCell>{t.date}</TableCell><TableCell className="font-medium">{t.description}</TableCell><TableCell>{t.tooth || '—'}</TableCell><TableCell>{t.cost.toLocaleString()} ج.م</TableCell><TableCell className="text-muted-foreground">{t.notes}</TableCell></TableRow>
                   ))}
                   {ptTreatments.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">لا توجد علاجات مسجلة</TableCell></TableRow>}
                 </TableBody>

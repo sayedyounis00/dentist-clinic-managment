@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { PanelRightClose } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Dashboard from '@/pages/Dashboard';
 import Patients from '@/pages/Patients';

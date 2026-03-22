@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,9 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { DatePicker } from '@/components/ui/date-picker';
+import AppointmentTypeSelect from '@/components/AppointmentTypeSelect';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Clock, CheckCircle, XCircle, AlertCircle, Pencil, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Plus, Clock, CheckCircle, XCircle, AlertCircle, Pencil, ChevronRight, ChevronLeft, CalendarDays, List } from 'lucide-react';
 import type { Appointment } from '@/data/types';
+import AppointmentCalendar from '@/components/AppointmentCalendar';
 
 export default function AppointmentsPage() {
   const { appointments, patients, addAppointment, updateAppointment } = useApp();
@@ -21,17 +24,25 @@ export default function AppointmentsPage() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [form, setForm] = useState({ patientId: '', date: selectedDate, type: 'كشف', notes: '' });
   const [editForm, setEditForm] = useState({ date: '', type: '', notes: '', status: '' as string });
+  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
 
   const today = new Date().toISOString().split('T')[0];
 
-  // Generate week days around selected date
+  // ── Week days for list view ──────────────────────────────────
   const getWeekDays = (centerDate: string) => {
-    const center = new Date(centerDate + 'T00:00');
+    const d = new Date(centerDate + 'T00:00');
+    // Get offset so Saturday=0
+    const dayOffset = (d.getDay() + 1) % 7;
+
+    // Find the Saturday of this week
+    d.setDate(d.getDate() - dayOffset);
+
     const days: string[] = [];
-    for (let i = -3; i <= 3; i++) {
-      const d = new Date(center);
-      d.setDate(d.getDate() + i);
-      days.push(d.toISOString().split('T')[0]);
+    // 6 days: Saturday to Thursday
+    for (let i = 0; i < 6; i++) {
+      const currentDate = new Date(d);
+      currentDate.setDate(d.getDate() + i);
+      days.push(currentDate.toISOString().split('T')[0]);
     }
     return days;
   };
@@ -44,8 +55,7 @@ export default function AppointmentsPage() {
     setSelectedDate(d.toISOString().split('T')[0]);
   };
 
-  const filtered = appointments
-    .filter(a => a.date === selectedDate);
+  const filtered = appointments.filter(a => a.date === selectedDate);
 
   const todayAppointments = appointments.filter(a => a.date === today);
   const scheduledCount = todayAppointments.filter(a => a.status === 'scheduled').length;
@@ -78,13 +88,6 @@ export default function AppointmentsPage() {
       case 'no-show': return 'secondary' as const;
       default: return 'outline' as const;
     }
-  };
-
-  const formatTime = (time: string) => {
-    const [h, m] = time.split(':').map(Number);
-    const period = h >= 12 ? 'م' : 'ص';
-    const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-    return `${hour12}:${m.toString().padStart(2, '0')} ${period}`;
   };
 
   const formatDay = (dateStr: string) => {
@@ -137,12 +140,38 @@ export default function AppointmentsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">المواعيد</h1>
           <p className="text-muted-foreground">إدارة جدول العيادة</p>
         </div>
-        <Button onClick={() => { setForm({ ...form, date: selectedDate }); setShowAdd(true); }}><Plus className="ml-2 h-4 w-4" /> موعد جديد</Button>
+        <div className="flex items-center gap-2">
+          {/* View mode toggle */}
+          <div className="flex rounded-lg border border-border overflow-hidden">
+            <Button
+              variant={viewMode === 'calendar' ? 'default' : 'ghost'}
+              size="sm"
+              className="rounded-none gap-1.5"
+              onClick={() => setViewMode('calendar')}
+            >
+              <CalendarDays className="h-4 w-4" />
+              تقويم
+            </Button>
+            <Button
+              variant={viewMode === 'list' ? 'default' : 'ghost'}
+              size="sm"
+              className="rounded-none gap-1.5"
+              onClick={() => setViewMode('list')}
+            >
+              <List className="h-4 w-4" />
+              قائمة
+            </Button>
+          </div>
+          <Button onClick={() => { setForm({ ...form, date: selectedDate }); setShowAdd(true); }}>
+            <Plus className="ml-2 h-4 w-4" /> موعد جديد
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -152,75 +181,92 @@ export default function AppointmentsPage() {
         <Card><CardContent className="p-4 text-center"><p className="text-sm text-muted-foreground">ملغي / لم يحضر</p><p className="text-2xl font-bold">{cancelledCount}</p></CardContent></Card>
       </div>
 
-      {/* Week Navigation */}
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" onClick={() => navigateWeek(-1)}><ChevronRight className="h-4 w-4" /></Button>
-        <div className="flex gap-1 flex-1 justify-center">
-          {weekDays.map(d => {
-            const info = formatDay(d);
-            return (
-              <Button
-                key={d}
-                variant={d === selectedDate ? 'default' : 'ghost'}
-                size="sm"
-                className={`flex flex-col items-center px-3 py-2 h-auto min-w-[52px] ${info.isToday && d !== selectedDate ? 'border border-primary' : ''}`}
-                onClick={() => setSelectedDate(d)}
-              >
-                <span className="text-xs">{info.dayName}</span>
-                <span className="text-sm font-bold">{info.dayNum}</span>
-                {info.hasAppts && d !== selectedDate && <span className="w-1.5 h-1.5 rounded-full bg-primary mt-0.5" />}
-              </Button>
-            );
-          })}
-        </div>
-        <Button variant="ghost" size="icon" onClick={() => navigateWeek(1)}><ChevronLeft className="h-4 w-4" /></Button>
-      </div>
+      {/* ─── CALENDAR VIEW ──────────────────────────────────────── */}
+      {viewMode === 'calendar' && (
+        <AppointmentCalendar
+          appointments={appointments}
+          patients={patients}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+          onEditAppointment={openEditDialog}
+          onUpdateStatus={updateStatus}
+        />
+      )}
 
-      {/* Date picker + Today button */}
-      <div className="flex gap-2 items-center">
-        <Input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} className="w-auto" />
-        {selectedDate !== today && (
-          <Button variant="outline" size="sm" onClick={() => setSelectedDate(today)}>اليوم</Button>
-        )}
-        <span className="text-sm text-muted-foreground mr-auto">{filtered.length} موعد</span>
-      </div>
+      {/* ─── LIST VIEW ──────────────────────────────────────────── */}
+      {viewMode === 'list' && (
+        <>
+          {/* Week Navigation */}
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => navigateWeek(-1)}><ChevronRight className="h-4 w-4" /></Button>
+            <div className="flex gap-1 flex-1 justify-center">
+              {weekDays.map(d => {
+                const info = formatDay(d);
+                return (
+                  <Button
+                    key={d}
+                    variant={d === selectedDate ? 'default' : 'ghost'}
+                    size="sm"
+                    className={`flex flex-col items-center px-3 py-2 h-auto min-w-[52px] ${info.isToday && d !== selectedDate ? 'border border-primary' : ''}`}
+                    onClick={() => setSelectedDate(d)}
+                  >
+                    <span className="text-xs">{info.dayName}</span>
+                    <span className="text-sm font-bold">{info.dayNum}</span>
+                    {info.hasAppts && d !== selectedDate && <span className="w-1.5 h-1.5 rounded-full bg-primary mt-0.5" />}
+                  </Button>
+                );
+              })}
+            </div>
+            <Button variant="ghost" size="icon" onClick={() => navigateWeek(1)}><ChevronLeft className="h-4 w-4" /></Button>
+          </div>
 
-      {/* Appointments List */}
-      <div className="space-y-3">
-        {filtered.length === 0 ? (
-          <Card><CardContent className="py-12 text-center text-muted-foreground">لا توجد مواعيد لهذا التاريخ</CardContent></Card>
-        ) : filtered.map(a => {
-          const patient = patients.find(p => p.id === a.patientId);
-          return (
-            <Card key={a.id} className="overflow-hidden">
-              <CardContent className="flex items-center gap-4 p-4">
-                {statusIcon(a.status)}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium">{patient?.name || 'غير معروف'}</p>
-                    {patient?.phone && <span className="text-xs text-muted-foreground">{patient.phone}</span>}
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge variant={statusVariant(a.status)}>{statusAr(a.status)}</Badge>
-                    <span className="text-sm text-muted-foreground">{a.type}</span>
-                    {a.notes && <span className="text-xs text-muted-foreground">· {a.notes}</span>}
-                  </div>
-                </div>
-                <div className="flex gap-1 items-center">
-                  <Button size="icon" variant="ghost" onClick={() => openEditDialog(a)}><Pencil className="h-4 w-4" /></Button>
-                  {a.status === 'scheduled' && (
-                    <>
-                      <Button size="sm" variant="outline" onClick={() => updateStatus(a, 'completed')}>✓ مكتمل</Button>
-                      <Button size="sm" variant="outline" onClick={() => updateStatus(a, 'cancelled')}>✕ إلغاء</Button>
-                      <Button size="sm" variant="outline" onClick={() => updateStatus(a, 'no-show')}>لم يحضر</Button>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+          {/* Date picker + Today button */}
+          <div className="flex gap-2 items-center">
+            <DatePicker value={selectedDate} onChange={v => setSelectedDate(v)} className="w-[150px]" />
+            {selectedDate !== today && (
+              <Button variant="outline" size="sm" onClick={() => setSelectedDate(today)}>اليوم</Button>
+            )}
+            <span className="text-sm text-muted-foreground mr-auto">{filtered.length} موعد</span>
+          </div>
+
+          {/* Appointments List */}
+          <div className="space-y-3">
+            {filtered.length === 0 ? (
+              <Card><CardContent className="py-12 text-center text-muted-foreground">لا توجد مواعيد لهذا التاريخ</CardContent></Card>
+            ) : filtered.map(a => {
+              const patient = patients.find(p => p.id === a.patientId);
+              return (
+                <Card key={a.id} className="overflow-hidden">
+                  <CardContent className="flex items-center gap-4 p-4">
+                    {statusIcon(a.status)}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium">{patient?.name || 'غير معروف'}</p>
+                        {patient?.phone && <span className="text-xs text-muted-foreground">{patient.phone}</span>}
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant={statusVariant(a.status)}>{statusAr(a.status)}</Badge>
+                        <span className="text-sm text-muted-foreground">{a.type}</span>
+                        {a.notes && <span className="text-xs text-muted-foreground">· {a.notes}</span>}
+                      </div>
+                    </div>
+                    <div className="flex gap-1 items-center">
+                      <Button size="icon" variant="ghost" onClick={() => openEditDialog(a)}><Pencil className="h-4 w-4" /></Button>
+                      {a.status === 'scheduled' && (
+                        <>
+                          <Button size="sm" variant="outline" onClick={() => updateStatus(a, 'completed')}>✓ مكتمل</Button>
+                          <Button size="sm" variant="outline" onClick={() => updateStatus(a, 'cancelled')}>✕ إلغاء</Button>
+                          <Button size="sm" variant="outline" onClick={() => updateStatus(a, 'no-show')}>لم يحضر</Button>
+                        </>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </>
+      )}
 
       {/* Add Dialog */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
@@ -234,8 +280,11 @@ export default function AppointmentsPage() {
                 <SelectContent>{patients.map(p => <SelectItem key={p.id} value={p.id}>{p.name} - {p.phone}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} /></div>
-            <div className="space-y-2"><Label>النوع *</Label><Input value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} placeholder="مثال: كشف، تنظيف، متابعة" /></div>
+            <div className="space-y-2"><Label>التاريخ</Label><DatePicker value={form.date} onChange={v => setForm({ ...form, date: v })} /></div>
+            <div className="space-y-2">
+              <Label>النوع *</Label>
+              <AppointmentTypeSelect value={form.type} onValueChange={v => setForm({ ...form, type: v })} />
+            </div>
             <div className="space-y-2"><Label>ملاحظات</Label><Textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} /></div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setShowAdd(false)}>إلغاء</Button><Button onClick={handleAdd}>جدولة</Button></DialogFooter>
@@ -250,8 +299,11 @@ export default function AppointmentsPage() {
             <DialogDescription>تعديل بيانات الموعد لـ {editingAppt ? patients.find(p => p.id === editingAppt.patientId)?.name : ''}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
-            <div className="space-y-2"><Label>التاريخ</Label><Input type="date" value={editForm.date} onChange={e => setEditForm({ ...editForm, date: e.target.value })} /></div>
-            <div className="space-y-2"><Label>النوع</Label><Input value={editForm.type} onChange={e => setEditForm({ ...editForm, type: e.target.value })} /></div>
+            <div className="space-y-2"><Label>التاريخ</Label><DatePicker value={editForm.date} onChange={v => setEditForm({ ...editForm, date: v })} /></div>
+            <div className="space-y-2">
+              <Label>النوع</Label>
+              <AppointmentTypeSelect value={editForm.type} onValueChange={v => setEditForm({ ...editForm, type: v })} />
+            </div>
             <div className="space-y-2">
               <Label>الحالة</Label>
               <Select value={editForm.status} onValueChange={v => setEditForm({ ...editForm, status: v })}>

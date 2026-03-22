@@ -1,0 +1,68 @@
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { Building2, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface Props {
+    onClinicCreated: (clinicId: string, clinicName: string) => void;
+}
+
+export default function ClinicSetup({ onClinicCreated }: Props) {
+    const { toast } = useToast();
+    const [name, setName] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async () => {
+        const trimmed = name.trim();
+        if (!trimmed) {
+            toast({ title: 'خطأ', description: 'الرجاء إدخال اسم العيادة', variant: 'destructive' });
+            return;
+        }
+        setLoading(true);
+        const { data, error } = await supabase.from('clinics').insert({ name: trimmed }).select().single();
+        setLoading(false);
+        if (error || !data) {
+            toast({ title: 'خطأ', description: 'فشل في إنشاء العيادة', variant: 'destructive' });
+            return;
+        }
+        localStorage.setItem('clinicId', data.id);
+        localStorage.setItem('clinicName', data.name);
+        onClinicCreated(data.id, data.name);
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-muted p-4">
+            <Card className="w-full max-w-md">
+                <CardHeader className="text-center">
+                    <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary">
+                        <Building2 className="h-7 w-7 text-primary-foreground" />
+                    </div>
+                    <CardTitle className="text-2xl">إعداد العيادة</CardTitle>
+                    <CardDescription>أدخل اسم عيادتك للبدء</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4 mt-4">
+                        <div className="space-y-2">
+                            <Label>اسم العيادة</Label>
+                            <Input
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                                placeholder="مثال: عيادة الأسنان"
+                                onKeyDown={e => { if (e.key === 'Enter') handleSubmit(); }}
+                                dir="rtl"
+                            />
+                        </div>
+                        <Button className="w-full" onClick={handleSubmit} disabled={loading}>
+                            {loading ? <Loader2 className="h-4 w-4 animate-spin ml-2" /> : null}
+                            إنشاء العيادة
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}

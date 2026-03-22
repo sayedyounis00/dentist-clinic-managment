@@ -2,7 +2,7 @@ import { useApp } from '@/contexts/AppContext';
 import { getPatientFinancials } from '@/data/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Users, Wallet, Clock, AlertCircle } from 'lucide-react';
+import { CalendarDays, Users, Wallet, Clock, AlertCircle, BookMinus } from 'lucide-react';
 
 interface Props {
   onViewPatient: (id: string) => void;
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function Dashboard({ onViewPatient, onNavigate }: Props) {
-  const { patients, treatments, payments, appointments, isDoctor } = useApp();
+  const { patients, treatments, payments, appointments, debts, debtPayments, isDoctor, clinicName } = useApp();
   const today = new Date().toISOString().split('T')[0];
 
   const todayAppts = appointments.filter(a => a.date === today && a.status === 'scheduled');
@@ -20,12 +20,29 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
   });
 
   const now = new Date();
-  const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - now.getDay());
+  const startOfWeek = new Date(now);
+  // Get 0-6 where 0=Sunday, 6=Saturday. We want Saturday to be the start (0 offset).
+  const dayOffset = (now.getDay() + 1) % 7;
+  startOfWeek.setDate(now.getDate() - dayOffset);
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 5); // Start on Sat + 5 days = Thursday
+  endOfWeek.setHours(23, 59, 59, 999);
+
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
   const todayRevenue = payments.filter(p => p.date === today).reduce((s, p) => s + p.amount, 0);
-  const weekRevenue = payments.filter(p => new Date(p.date) >= startOfWeek).reduce((s, p) => s + p.amount, 0);
+  const weekRevenue = payments.filter(p => {
+    const d = new Date(p.date);
+    return d >= startOfWeek && d <= endOfWeek;
+  }).reduce((s, p) => s + p.amount, 0);
   const monthRevenue = payments.filter(p => new Date(p.date) >= startOfMonth).reduce((s, p) => s + p.amount, 0);
+
+  const totalDebtOutstanding = debts.reduce((sum, d) => {
+    const paid = debtPayments.filter(p => p.debtId === d.id).reduce((s, p) => s + p.amount, 0);
+    return sum + Math.max(0, d.amount - paid);
+  }, 0);
 
   const upcoming = appointments
     .filter(a => a.date >= today && a.status === 'scheduled')
@@ -40,79 +57,76 @@ export default function Dashboard({ onViewPatient, onNavigate }: Props) {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">لوحة التحكم</h1>
-        <p className="text-muted-foreground">مرحباً بك! هذه نظرة عامة على عيادتك.</p>
+        <p className="text-muted-foreground">مرحباً بك! هذه نظرة عامة على {clinicName}.</p>
       </div>
 
-      <div className={`grid gap-4 ${isDoctor ? 'md:grid-cols-6' : 'md:grid-cols-3'}`}>
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('appointments')}>
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <CalendarDays className="h-6 w-6 text-primary" />
+      <div className={`grid gap-4 grid-cols-2 sm:grid-cols-3 ${isDoctor ? 'xl:grid-cols-7' : 'xl:grid-cols-3'}`}>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow group" onClick={() => onNavigate('appointments')}>
+          <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 mb-2 group-hover:scale-110 transition-transform">
+              <CalendarDays className="h-5 w-5 text-primary" />
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">مواعيد اليوم</p>
-              <p className="text-2xl font-bold">{todayAppts.length}</p>
-            </div>
+            <p className="text-xs text-muted-foreground">مواعيد اليوم</p>
+            <p className="text-xl font-bold mt-1">{todayAppts.length}</p>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('patients')}>
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10">
-              <Users className="h-6 w-6 text-secondary" />
+        <Card className="cursor-pointer hover:shadow-md transition-shadow group" onClick={() => onNavigate('patients')}>
+          <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10 mb-2 group-hover:scale-110 transition-transform">
+              <Users className="h-5 w-5 text-secondary" />
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">إجمالي المرضى</p>
-              <p className="text-2xl font-bold">{patients.length}</p>
-            </div>
+            <p className="text-xs text-muted-foreground">إجمالي المرضى</p>
+            <p className="text-xl font-bold mt-1">{patients.length}</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10">
-              <AlertCircle className="h-6 w-6 text-destructive" />
+        <Card className="group">
+          <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10 mb-2 group-hover:scale-110 transition-transform">
+              <AlertCircle className="h-5 w-5 text-destructive" />
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">مدفوعات معلقة</p>
-              <p className="text-2xl font-bold">{pendingPayments.length}</p>
-            </div>
+            <p className="text-xs text-muted-foreground">مدفوعات معلقة</p>
+            <p className="text-xl font-bold mt-1">{pendingPayments.length}</p>
           </CardContent>
         </Card>
 
         {isDoctor && (
           <>
-            <Card>
-              <CardContent className="flex items-center gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <Wallet className="h-6 w-6 text-primary" />
+            <Card className="group">
+              <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 mb-2 group-hover:scale-110 transition-transform">
+                  <Wallet className="h-5 w-5 text-primary" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">إيرادات اليوم</p>
-                  <p className="text-2xl font-bold">{todayRevenue.toLocaleString()} ج.م</p>
-                </div>
+                <p className="text-xs text-muted-foreground">إيرادات اليوم</p>
+                <p className="text-xl font-bold mt-1">{todayRevenue.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">ج.م</span></p>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="flex items-center gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <Wallet className="h-6 w-6 text-primary" />
+            <Card className="group">
+              <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 mb-2 group-hover:scale-110 transition-transform">
+                  <Wallet className="h-5 w-5 text-primary" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">هذا الأسبوع</p>
-                  <p className="text-2xl font-bold">{weekRevenue.toLocaleString()} ج.م</p>
-                </div>
+                <p className="text-xs text-muted-foreground">هذا الأسبوع</p>
+                <p className="text-xl font-bold mt-1">{weekRevenue.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">ج.م</span></p>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="flex items-center gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <Wallet className="h-6 w-6 text-primary" />
+            <Card className="group">
+              <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 mb-2 group-hover:scale-110 transition-transform">
+                  <Wallet className="h-5 w-5 text-primary" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">هذا الشهر</p>
-                  <p className="text-2xl font-bold">{monthRevenue.toLocaleString()} ج.م</p>
+                <p className="text-xs text-muted-foreground">هذا الشهر</p>
+                <p className="text-xl font-bold mt-1">{monthRevenue.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">ج.م</span></p>
+              </CardContent>
+            </Card>
+            <Card className="group cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('debts')}>
+              <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10 mb-2 group-hover:scale-110 transition-transform">
+                  <BookMinus className="h-5 w-5 text-destructive" />
                 </div>
+                <p className="text-xs text-muted-foreground">المديونيات</p>
+                <p className="text-xl font-bold mt-1">{totalDebtOutstanding.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">ج.م</span></p>
               </CardContent>
             </Card>
           </>

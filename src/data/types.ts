@@ -1,8 +1,15 @@
+export interface Clinic {
+  id: string;
+  name: string;
+  createdAt: string;
+}
+
 export interface User {
   id: string;
   name: string;
   password: string;
-  role: 'doctor' | 'receptionist';
+  role: 'doctor' | 'assistant';
+  clinicId: string;
   createdAt: string;
 }
 
@@ -37,8 +44,9 @@ export interface Payment {
   patientId: string;
   amount: number;
   date: string;
-  method: 'cash' | 'card' | 'insurance';
+  method: 'cash' | 'card';
   note: string;
+  referenceNumber?: string;
   recordedBy: string;
 }
 
@@ -55,6 +63,28 @@ export interface Appointment {
 }
 
 export type PaymentStatus = 'Paid' | 'Partial' | 'Unpaid' | 'Overpaid';
+
+export interface Debt {
+  id: string;
+  name: string;
+  phone?: string;
+  amount: number;
+  date: string;
+  notes?: string;
+  isPaid: boolean;
+  createdAt: string;
+  createdBy: string;
+}
+
+export interface DebtPayment {
+  id: string;
+  debtId: string;
+  amount: number;
+  date: string;
+  note?: string;
+  createdAt: string;
+  recordedBy: string;
+}
 
 export function getPatientFinancials(patientId: string, treatments: Treatment[], payments: Payment[]) {
   const totalCharged = treatments.filter(t => t.patientId === patientId).reduce((s, t) => s + t.cost, 0);

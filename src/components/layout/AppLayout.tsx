@@ -8,6 +8,7 @@ import PatientDetail from '@/pages/PatientDetail';
 import AppointmentsPage from '@/pages/Appointments';
 import Finance from '@/pages/Finance';
 import Staff from '@/pages/Staff';
+import Debts from '@/pages/Debts';
 import { useApp } from '@/contexts/AppContext';
 
 export default function AppLayout() {
@@ -35,6 +36,7 @@ export default function AppLayout() {
       case 'patients': return <Patients onViewPatient={openPatient} />;
       case 'appointments': return <AppointmentsPage />;
       case 'finance': return isDoctor ? <Finance /> : <Dashboard onViewPatient={openPatient} onNavigate={navigate} />;
+      case 'debts': return isDoctor ? <Debts /> : <Dashboard onViewPatient={openPatient} onNavigate={navigate} />;
       case 'staff': return isDoctor ? <Staff /> : <Dashboard onViewPatient={openPatient} onNavigate={navigate} />;
       default: return <Dashboard onViewPatient={openPatient} onNavigate={navigate} />;
     }

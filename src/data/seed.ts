@@ -30,7 +30,7 @@ export const seedTreatments: Treatment[] = [
 export const seedPayments: Payment[] = [
   { id: 'pay1', patientId: 'p1', amount: 2000, date: '2024-06-10', method: 'card', note: 'First payment', recordedBy: 'u1' },
   { id: 'pay2', patientId: 'p1', amount: 1000, date: '2024-06-30', method: 'cash', note: 'Second payment', recordedBy: 'u2' },
-  { id: 'pay3', patientId: 'p2', amount: 800, date: '2024-07-01', method: 'insurance', note: 'Full payment', recordedBy: 'u1' },
+  { id: 'pay3', patientId: 'p2', amount: 800, date: '2024-07-01', method: 'card', note: 'Full payment', referenceNumber: '123456', recordedBy: 'u1' },
   { id: 'pay4', patientId: 'p3', amount: 400, date: '2024-07-15', method: 'cash', note: 'Partial payment', recordedBy: 'u2' },
   { id: 'pay5', patientId: 'p4', amount: 1200, date: '2024-08-10', method: 'card', note: 'Full payment', recordedBy: 'u3' },
   { id: 'pay6', patientId: 'p5', amount: 3000, date: '2024-08-20', method: 'card', note: 'Initial payment', recordedBy: 'u1' },

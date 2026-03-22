@@ -14,15 +14,27 @@ export default function Finance() {
 
   const cashTotal = payments.filter(p => p.method === 'cash').reduce((s, p) => s + p.amount, 0);
   const cardTotal = payments.filter(p => p.method === 'card').reduce((s, p) => s + p.amount, 0);
-  const insuranceTotal = payments.filter(p => p.method === 'insurance').reduce((s, p) => s + p.amount, 0);
+
 
   const now = new Date();
   const today = now.toISOString().split('T')[0];
-  const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - now.getDay());
+  const startOfWeek = new Date(now);
+  // Get 0-6 where 0=Sunday, 6=Saturday. We want Saturday to be the start (0 offset).
+  const dayOffset = (now.getDay() + 1) % 7;
+  startOfWeek.setDate(now.getDate() - dayOffset);
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 5); // Start on Sat + 5 days = Thursday
+  endOfWeek.setHours(23, 59, 59, 999);
+
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
   const todayRev = payments.filter(p => p.date === today).reduce((s, p) => s + p.amount, 0);
-  const weekRev = payments.filter(p => new Date(p.date) >= startOfWeek).reduce((s, p) => s + p.amount, 0);
+  const weekRev = payments.filter(p => {
+    const d = new Date(p.date);
+    return d >= startOfWeek && d <= endOfWeek;
+  }).reduce((s, p) => s + p.amount, 0);
   const monthRev = payments.filter(p => new Date(p.date) >= startOfMonth).reduce((s, p) => s + p.amount, 0);
 
   const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
@@ -54,12 +66,10 @@ export default function Finance() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-primary" /><span>نقداً</span></div><span className="font-bold">{cashTotal.toLocaleString()} ج.م</span></div>
             <div className="flex items-center justify-between"><div className="flex items-center gap-2"><CreditCard className="h-4 w-4 text-primary" /><span>بطاقة</span></div><span className="font-bold">{cardTotal.toLocaleString()} ج.م</span></div>
-            <div className="flex items-center justify-between"><div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /><span>تأمين</span></div><span className="font-bold">{insuranceTotal.toLocaleString()} ج.م</span></div>
             {totalCollected > 0 && (
               <div className="mt-4 flex h-4 overflow-hidden rounded-full bg-muted">
                 <div className="bg-primary" style={{ width: `${(cashTotal / totalCollected) * 100}%` }} />
                 <div className="bg-primary/70" style={{ width: `${(cardTotal / totalCollected) * 100}%` }} />
-                <div className="bg-primary/40" style={{ width: `${(insuranceTotal / totalCollected) * 100}%` }} />
               </div>
             )}
           </CardContent>

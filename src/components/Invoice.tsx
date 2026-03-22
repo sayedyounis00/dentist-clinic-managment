@@ -17,7 +17,7 @@ export default function Invoice({ patient, treatments, payments, onBack }: Props
   const invoiceNum = `INV-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
 
   const statusAr = (s: string) => s === 'Paid' ? 'مدفوع' : s === 'Partial' ? 'جزئي' : s === 'Unpaid' ? 'غير مدفوع' : 'زائد';
-  const methodAr = (m: string) => m === 'cash' ? 'نقداً' : m === 'card' ? 'بطاقة' : 'تأمين';
+  const methodAr = (m: string) => m === 'cash' ? 'نقداً' : 'بطاقة';
 
   const handlePrint = () => {
     const content = invoiceRef.current;
@@ -93,9 +93,9 @@ export default function Invoice({ patient, treatments, payments, onBack }: Props
 
         <h3 className="font-semibold mb-2">العلاجات</h3>
         <table className="w-full mb-6 text-sm">
-          <thead><tr className="border-b-2 border-border"><th className="text-right py-2 text-muted-foreground text-xs">التاريخ</th><th className="text-right py-2 text-muted-foreground text-xs">الوصف</th><th className="text-right py-2 text-muted-foreground text-xs">السن</th><th className="text-left py-2 text-muted-foreground text-xs">التكلفة</th></tr></thead>
+          <thead><tr className="border-b-2 border-border"><th className="text-right py-2 text-muted-foreground text-xs">التاريخ</th><th className="text-right py-2 text-muted-foreground text-xs">الوصف</th><th className="text-right py-2 text-muted-foreground text-xs">السبب</th><th className="text-left py-2 text-muted-foreground text-xs">التكلفة</th></tr></thead>
           <tbody>
-            {treatments.map(t => (<tr key={t.id} className="border-b border-border/50"><td className="py-2">{t.date}</td><td className="py-2">{t.description}</td><td className="py-2">{t.tooth || '—'}</td><td className="py-2 text-left">{t.cost.toLocaleString()} ج.م</td></tr>))}
+            {treatments.map(t => (<tr key={t.id} className="border-b border-border/50"><td className="py-2">{t.date}</td><td className="py-2">{t.description}</td><td className="py-2">{t.notes || '—'}</td><td className="py-2 text-left">{t.cost.toLocaleString()} ج.م</td></tr>))}
           </tbody>
         </table>
 
@@ -103,9 +103,9 @@ export default function Invoice({ patient, treatments, payments, onBack }: Props
           <>
             <h3 className="font-semibold mb-2">المدفوعات</h3>
             <table className="w-full mb-6 text-sm">
-              <thead><tr className="border-b-2 border-border"><th className="text-right py-2 text-muted-foreground text-xs">التاريخ</th><th className="text-right py-2 text-muted-foreground text-xs">الطريقة</th><th className="text-left py-2 text-muted-foreground text-xs">المبلغ</th></tr></thead>
+              <thead><tr className="border-b-2 border-border"><th className="text-right py-2 text-muted-foreground text-xs">التاريخ</th><th className="text-right py-2 text-muted-foreground text-xs">الطريقة</th><th className="text-right py-2 text-muted-foreground text-xs">الرقم المرجعي</th><th className="text-left py-2 text-muted-foreground text-xs">المبلغ</th></tr></thead>
               <tbody>
-                {payments.map(p => (<tr key={p.id} className="border-b border-border/50"><td className="py-2">{p.date}</td><td className="py-2">{methodAr(p.method)}</td><td className="py-2 text-left">{p.amount.toLocaleString()} ج.م</td></tr>))}
+                {payments.map(p => (<tr key={p.id} className="border-b border-border/50"><td className="py-2">{p.date}</td><td className="py-2">{methodAr(p.method)}</td><td className="py-2">{p.referenceNumber || '-'}</td><td className="py-2 text-left">{p.amount.toLocaleString()} ج.م</td></tr>))}
               </tbody>
             </table>
           </>
@@ -115,7 +115,7 @@ export default function Invoice({ patient, treatments, payments, onBack }: Props
           <div className="w-64 space-y-2">
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">المجموع:</span><span>{fin.totalCharged.toLocaleString()} ج.م</span></div>
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">إجمالي المدفوع:</span><span>-{fin.totalPaid.toLocaleString()} ج.م</span></div>
-            <div className="flex justify-between font-bold text-lg border-t-2 border-foreground pt-2"><span>الرصيد المستحق:</span><span>{fin.balance.toLocaleString()} ج.م</span></div>
+            <div className="flex justify-between font-bold text-lg border-t-2 border-foreground pt-2"><span>الباقي المستحق:</span><span>{fin.balance.toLocaleString()} ج.م</span></div>
             <div className="flex justify-start pt-1">
               <Badge variant={fin.status === 'Paid' ? 'default' : fin.status === 'Partial' ? 'secondary' : 'destructive'} className="text-sm">{statusAr(fin.status)}</Badge>
             </div>

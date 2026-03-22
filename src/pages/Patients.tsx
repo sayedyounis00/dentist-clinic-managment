@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { DatePicker } from '@/components/ui/date-picker';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Search } from 'lucide-react';
 
@@ -78,7 +79,7 @@ export default function Patients({ onViewPatient }: Props) {
                 <TableHead>الاسم</TableHead>
                 <TableHead>الهاتف</TableHead>
                 <TableHead>آخر زيارة</TableHead>
-                <TableHead>الرصيد</TableHead>
+                <TableHead>الباقي</TableHead>
                 <TableHead>الحالة</TableHead>
               </TableRow>
             </TableHeader>
@@ -111,7 +112,7 @@ export default function Patients({ onViewPatient }: Props) {
           </DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>الاسم الكامل *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
+              <div className="space-y-2"><Label> الاسم الكامل ثلاثي*</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
               <div className="space-y-2"><Label>الهاتف *</Label><Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></div>
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -125,7 +126,11 @@ export default function Patients({ onViewPatient }: Props) {
                 <Button type="button" size="sm" variant={form.appointmentDate === today ? 'default' : 'outline'} onClick={() => setForm({ ...form, appointmentDate: form.appointmentDate === today ? '' : today })}>اليوم</Button>
                 <Button type="button" size="sm" variant={form.appointmentDate === tomorrow ? 'default' : 'outline'} onClick={() => setForm({ ...form, appointmentDate: form.appointmentDate === tomorrow ? '' : tomorrow })}>غداً</Button>
                 <div className="flex items-center gap-2">
-                  <Input type="date" className="w-auto" value={form.appointmentDate !== today && form.appointmentDate !== tomorrow ? form.appointmentDate : ''} onChange={e => setForm({ ...form, appointmentDate: e.target.value })} />
+                  <DatePicker
+                    className="w-auto min-w-[150px]"
+                    value={form.appointmentDate !== today && form.appointmentDate !== tomorrow ? form.appointmentDate : ''}
+                    onChange={v => setForm({ ...form, appointmentDate: v })}
+                  />
                 </div>
               </div>
             </div>

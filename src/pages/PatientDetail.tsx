@@ -23,7 +23,13 @@ interface Props { patientId: string; onBack: () => void; }
 export default function PatientDetail({ patientId, onBack }: Props) {
   const { patients, treatments, payments, appointments, isDoctor, addTreatment, addPayment, addAppointment, deleteAppointment, updatePatient, deletePatient } = useApp();
   const { toast } = useToast();
-  const patient = patients.find(p => p.id === patientId)!;
+  const patient = patients.find(p => p.id === patientId);
+
+  // Guard: patient was just deleted, component will unmount shortly via onBack()
+  if (!patient) {
+    return null;
+  }
+
   const fin = getPatientFinancials(patientId, treatments, payments);
   const ptTreatments = treatments.filter(t => t.patientId === patientId).sort((a, b) => b.date.localeCompare(a.date));
   const ptPayments = payments.filter(p => p.patientId === patientId).sort((a, b) => b.date.localeCompare(a.date));

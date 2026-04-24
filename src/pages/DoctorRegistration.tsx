@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Stethoscope, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+// NOTE: Supabase import kept but not used — offline mode active
+// import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
     clinicId: string;
@@ -31,17 +32,19 @@ export default function DoctorRegistration({ clinicId, clinicName, onDoctorCreat
             return;
         }
         setLoading(true);
-        const { data, error } = await supabase.from('clinic_users').insert({
+        // Offline: create the doctor locally
+        const id = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+        const user = {
+            id,
             name: trimmedName,
             password,
-            role: 'doctor',
-            clinic_id: clinicId,
-        }).select().single();
+            role: 'doctor' as const,
+            clinicId,
+            createdAt: new Date().toISOString(),
+        };
+        // Save to localStorage
+        localStorage.setItem('offline_users', JSON.stringify([user]));
         setLoading(false);
-        if (error || !data) {
-            toast({ title: 'خطأ', description: 'فشل في إنشاء حساب الطبيب', variant: 'destructive' });
-            return;
-        }
         toast({ title: 'تم بنجاح', description: 'تم إنشاء حساب الطبيب' });
         onDoctorCreated();
     };

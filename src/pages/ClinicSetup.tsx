@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Building2, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+// NOTE: Supabase import kept but not used — offline mode active
+// import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
     onClinicCreated: (clinicId: string, clinicName: string) => void;
@@ -23,15 +24,12 @@ export default function ClinicSetup({ onClinicCreated }: Props) {
             return;
         }
         setLoading(true);
-        const { data, error } = await supabase.from('clinics').insert({ name: trimmed }).select().single();
+        // Offline: generate a local ID
+        const id = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+        localStorage.setItem('clinicId', id);
+        localStorage.setItem('clinicName', trimmed);
         setLoading(false);
-        if (error || !data) {
-            toast({ title: 'خطأ', description: 'فشل في إنشاء العيادة', variant: 'destructive' });
-            return;
-        }
-        localStorage.setItem('clinicId', data.id);
-        localStorage.setItem('clinicName', data.name);
-        onClinicCreated(data.id, data.name);
+        onClinicCreated(id, trimmed);
     };
 
     return (

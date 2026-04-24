@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { User, Patient, Treatment, Payment, Appointment, Debt, DebtPayment, Clinic } from '@/data/types';
 import { supabase } from '@/integrations/supabase/client';
